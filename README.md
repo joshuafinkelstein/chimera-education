@@ -1,1 +1,2 @@
-# chimera-education
+# Chimera
+## A Framework for Online Education

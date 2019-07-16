@@ -1,0 +1,17 @@
+vendor
+
+client_secrets.json
+
+config.php
+
+documentation
+
+privacy
+
+test/MathJax
+
+dataextraction/downloaded_transcripts/
+
+dataextraction/python/
+
+dataextraction/client_secret.json

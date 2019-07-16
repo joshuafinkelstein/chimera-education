@@ -1,0 +1,254 @@
+body {
+  margin: 0;
+  color: white;
+  font-family: 'Quicksand', sans-serif;
+  background-color: #584b4ff2;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+
+.red {
+  background-color: red;
+}
+
+.blue {
+  background-color: #78b0a0;
+}
+
+.yellow {
+  background-color: #ffd152;
+}
+
+.orange {
+  background-color: orange;
+}
+
+/* colors */
+.skyblue {
+  background-color: #cae8f2;
+}
+
+.darkgrey {
+  background-color: #a9a9a9;
+}
+
+.lightgrey {
+  background-color: #fcfcfc;
+}
+
+.fill-watermelon {
+  background-color: #ff3835;
+}
+
+.primary-highlight {
+  color: #78b0a0;
+}
+
+.hide {
+  display: none;
+}
+
+/* MAIN */
+
+header {
+  display: flex;
+  font-family: 'Montserrat', sans-serif;
+  height: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #584b4f;
+  color: white;
+  border-bottom: 0;
+}
+
+header a {
+  display: flex;
+}
+
+header h3 {
+  font-weight: normal;
+  padding-top: 18px;
+}
+
+.flex {
+  flex: auto;
+}
+
+header nav {
+  display: flex;
+  flex: none;
+}
+
+header nav a {
+  padding: 20px;
+  cursor: pointer;
+  margin: 0;
+  border-bottom: 4px solid #584b4f;
+}
+
+header nav a:hover {
+  border-bottom: 4px solid #78b0a0;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Montserrat';
+  margin: 0px;
+}
+
+.jumbotron {
+  display: flex;
+  height: 500px;
+  width: 100%;
+  margin: auto;
+  background-color: #343233;
+}
+
+.line-graphics {
+  flex: auto;
+  margin: 0 !important;
+  align-self: center;
+}
+
+.line {
+  position: relative;
+  bottom: 70px;
+  height: 8px;
+  margin-top: 8px;
+}
+
+.jumbotron .content {
+  margin: 10% auto;
+  text-align: center;
+}
+
+.jumbotron .content .content-subtitles {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.subtitle {
+  margin: auto;
+}
+
+.jumbotron p {
+  display: inline-flex;
+  padding: 10px;
+  font-size: 15px;
+  color: #efeae1;
+}
+
+.jumbotron .content img {
+  height: 40px;
+  width: auto;
+  position: relative;
+  top: -10px;
+}
+
+.jumbotron .content h1 {
+  font-size: 50px;
+}
+
+.flex-container {
+  display: flex;
+  padding: 5%;
+  flex-wrap: wrap;
+  background-color: #343233;
+}
+
+.flex-drawers {
+  flex: auto;
+  max-width: 100%;
+  padding: 50px;
+}
+
+.drawer {
+  height: 50px;
+  text-align: right;
+  border: 2px solid #343233;
+  vertical-align: middle;
+  font-size: 20px;
+  padding-top: 18px;
+  padding-right: 10px;
+  cursor: pointer;
+}
+
+.drawer:hover {
+  border: 2px solid #78b0a0;
+  color: #78b0a0;
+}
+
+.flex-main {
+  display: flex;
+  min-width: 50%;
+  max-width: 800px;
+  min-height: 300px;
+  flex: auto;
+  position: relative;
+  padding: 10px 10px 50px 10px;
+}
+
+.main-content {
+  flex: auto;
+}
+
+.flex-main h2 {
+  text-align: center;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.primary-button {
+  background-color: #78b0a0;
+  border: 0;
+  height: 40px;
+  width: 100px;
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  right: 70px;
+  font-family: 'Montserrat', sans-serif;
+  text-shadow: 1px 1px 1px black;
+}
+
+.flex-additional {
+  padding: 10px;
+  min-width: 200px;
+  min-height: 300px;
+  max-width: 300px;
+}
+
+.flex-additional h5 {
+  margin-top: 10px;
+  cursor: pointer;
+  font-family: 'Quicksand' !important;
+}
+
+.toggle-dots {
+  display: block;
+  height: 30px;
+  margin-left: 20px;
+  justify-content: center;
+}
+
+.dot {
+  border-radius: 50%;
+  background-color: #ffd152;
+  height: 12px;
+  width: 12px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.dot:hover {
+  background-color: #78b0a0;
+}
+
+.footer {
+  display: flex;
+  padding: 10px;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+}

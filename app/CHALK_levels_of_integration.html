@@ -1,0 +1,646 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <title>Chimera | CHALK 5 Levels of Integration</title>
+    <link href='main.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans|Open+Sans" rel="stylesheet">
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          processEscapes: true
+        }
+      });
+    </script>
+    <script type="text/javascript" src="MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script type="text/javascript">videoID = '5utybhhmpFk';</script>
+    <link rel="apple-touch-icon" sizes="57x57" href="/app/logos/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/app/logos/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/app/logos/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/app/logos/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/app/logos/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/app/logos/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/app/logos/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/app/logos/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/app/logos/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/app/logos/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/app/logos/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/app/logos/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/app/logos/favicon-16x16.png">
+    <link rel="manifest" href="/app/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/app/logos/ms-icon-144x144.png">
+    <meta name="theme-color" content="#584b4f">
+  </head>
+  <body>
+    <header>
+      <a href="https://chimeraeditor.com">
+        <img id="chimera-logo" src="logos/star.png" style="height: 40px; width: 40px; padding: 10px;">
+        <h3 style="margin: auto;">Chimera</h3>
+      </a>
+      <nav>
+        <div class="flex"></div>
+        <a href="https://chimeraeditor.com">
+          <button id="toggleLibrary" class="primary-button" data-title="View Files">
+            What is Chimera?
+          </button>
+        </a>
+      </nav>
+    </header>
+
+    <!-- video notes -->
+    <div id="main">
+
+      <div id="noteSection">
+        <div id="note-editor-header">
+          <div id="filename">
+            5 Levels of Integration | Nathan Dalaklis
+          </div>
+          <div class="toolbar">
+            <div class="svgWrapper" id="toggle-bold" data-title="ctrl+b" data-pressed=0>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#efeae1" d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+            </div>
+            <div class="svgWrapper" id="toggle-italic" data-title="ctrl+i" data-pressed=0>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="#efeae1" d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z"/></svg>
+            </div>
+            <div class="svgWrapper" id="toggle-underline" data-title="ctrl+q" data-pressed=0>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="#efeae1" d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zm-7 2v2h14v-2H5z"/></svg>
+            </div>
+            <div class="svgWrapper" id="toggle-size" data-title="ctrl+m" data-color="black">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="#efeae1" d="M9 4v3h5v12h3V7h5V4H9zm-6 8h3v7h3v-7h3V9H3v3z"/></svg>
+            </div>
+            <div class="svgWrapper" id="toggle-color" data-title="ctrl+z" data-size="14px">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill-opacity=".36" d="M0 20h24v4H0z"/><path fill="#efeae1" d="M11 3L5.5 17h2.25l1.12-3h6.25l1.12 3h2.25L13 3h-2zm-1.38 9L12 5.67 14.38 12H9.62z"/></svg>
+            </div>
+
+            <div class="flex"></div>
+
+          </div>
+        </div>
+
+
+        <div id="whole-paper">
+          <div id="paper-text">
+            <div id="history">
+
+              <div
+                id="0"
+                class="note"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="text"
+                data-format=""
+                data-identifier="[unique hashcode]"
+                data-source="user"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                <i>The following notes were produced by Chimera in collaboration with CHALK creator Nathan Dalaklis.</i>
+              </div>
+
+              <div
+                id="blank"
+                class="note"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="blank"
+                data-identifier="[unique hashcode]"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+              </div>
+
+              <div
+                id="12"
+                class="note"
+                data-title="Fundamental Theorem of Calculus"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-description=""
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="wikipedia article"
+                data-identifier="[unique hashcode]"
+                data-source="Wikipedia"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://en.wikipedia.org/wiki/Fundamental_theorem_of_calculus
+              </div>
+
+              <div
+                id="45"
+                class="note"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="text"
+                data-format=""
+                data-identifier="[unique hashcode]"
+                data-source="user"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                5 Levels of Integration:
+                <ol>
+                  <li>Area Formula</li>
+                  <li>Riemann Sum</li>
+                  <li>Storm of Formulas</li>
+                  <li>Riemann Integration</li>
+                  <li>Lebesgue Integration</li>
+                </ol>
+              </div>
+
+              <div
+                id="48"
+                class="note"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="text"
+                data-format=""
+                data-identifier="[unique hashcode]"
+                data-source="user"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                <b>Level 1: Area</b>
+              </div>
+
+              <div
+                id="88"
+                class="note"
+                data-title="Formula Sheet for Different Shapes"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="generic"
+                data-identifier="[unique hashcode]"
+                data-source="Varsity Tutors"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://www.varsitytutors.com/hotmath/hotmath_help/topics/perimeter-area-volume
+              </div>
+
+              <div
+                id="94"
+                class="note"
+                data-title="Level 2: Riemann Sums"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-description=""
+                data-image="images/Riemann_sum_convergence.png"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="wikipedia article"
+                data-identifier="[unique hashcode]"
+                data-source="Wikipedia"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://en.wikipedia.org/wiki/Riemann_sum
+              </div>
+
+              <div
+                id="141"
+                class="note"
+                data-title="Trapezoidal Rule"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-description=""
+                data-image="images/330px-Trapezoidal_rule_illustration.svg"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="wikipedia article"
+                data-identifier="[unique hashcode]"
+                data-source="Wikipedia"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://en.wikipedia.org/wiki/Trapezoidal_rule
+              </div>
+
+              <div
+                id="162"
+                class="note"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="text"
+                data-format=""
+                data-identifier="[unique hashcode]"
+                data-source="user"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                This is a method of approximating an integral.
+              </div>
+
+              <div
+                id="190"
+                class="note"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="text"
+                data-format=""
+                data-identifier="[unique hashcode]"
+                data-source="user"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                <b>Level 3: Storm of Formulas</b>
+              </div>
+
+              <div
+                id="234"
+                class="note"
+                data-title="There's a Lot of Formulas..."
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="generic"
+                data-identifier="[unique hashcode]"
+                data-source="Ohio State University"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://mslc.osu.edu/sites/mslc.osu.edu/files/Integral%20Calculus%20Formula%20Sheet_0.pdf
+              </div>
+
+              <div
+                id="256"
+                class="note"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="text"
+                data-format=""
+                data-identifier="[unique hashcode]"
+                data-source="user"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                <b>Level 4: Riemann Integrations</b>
+              </div>
+
+              <div
+                id="263"
+                class="note"
+                data-title="Computation-based vs proof-based work"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="generic"
+                data-identifier="[unique hashcode]"
+                data-source="Wellesley College"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://www.wellesley.edu/sites/default/files/assets/transitioningfromcomputationaltoabstractmathematics.pdf
+              </div>
+
+              <div
+                id="276"
+                class="note"
+                data-title="Online Course in Real Analysis"
+                data-creator="joshfink429@gmail.com"
+                data-image="images/ocw.jpg"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="generic"
+                data-identifier="[unique hashcode]"
+                data-source="MIT OpenCourseware"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://ocw.mit.edu/courses/mathematics/18-100c-real-analysis-fall-2012/
+              </div>
+
+              <div
+                id="293"
+                class="note"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="text"
+                data-format=""
+                data-identifier="[unique hashcode]"
+                data-source="user"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                Concept of Riemann Integrability
+              </div>
+
+              <div
+                id="306"
+                class="note"
+                data-title="Infinum and Supremum: Practice Problems"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="generic"
+                data-identifier="[unique hashcode]"
+                data-source="Stack Exchange"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://math.stackexchange.com/questions/tagged/supremum-and-infimum?sort=frequent&pageSize=50
+              </div>
+
+              <div
+                id="318"
+                class="note"
+                data-title="The proof requires a bit more development of the ideas I skim over in the video, but the first response to this stack exchange post does a pretty good job."
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="generic"
+                data-identifier="[unique hashcode]"
+                data-source="Stack Exchange"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://math.stackexchange.com/questions/2636010/how-to-prove-that-a-function-is-riemann-integrable-if-and-only-if-it-is-darboux?fbclid=IwAR3w2EInCUYXBKgp0Xrr6J4vnqQ0wqhEsk8FM6OxdDf2pfsaGzjD5ZpRlJg
+              </div>
+
+              <div
+                id="327"
+                class="note"
+                data-title="Definition: Riemann Integral"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-description=""
+                data-image="images/1024px-Integral-area-under-curve.svg.png"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="wikipedia article"
+                data-identifier="[unique hashcode]"
+                data-source="Wikipedia"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://en.wikipedia.org/wiki/Riemann_integral#Definition
+              </div>
+
+              <div
+                id="346"
+                class="note"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="text"
+                data-format=""
+                data-identifier="[unique hashcode]"
+                data-source="user"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                <b>Level 5: Lebesgue Integration</b>
+              </div>
+
+              <div
+                id="368"
+                class="note"
+                data-title="What is a 'Measure'?"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-description=""
+                data-image="images/Measure_illustration.png"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="wikipedia article"
+                data-identifier="[unique hashcode]"
+                data-source="Wikipedia"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://en.wikipedia.org/wiki/Measure_(mathematics)
+              </div>
+
+              <div
+                id="401"
+                class="note"
+                data-title="Lebesgue Measure"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-description=""
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="wikipedia article"
+                data-identifier="[unique hashcode]"
+                data-source="Wikipedia"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://en.wikipedia.org/wiki/Lebesgue_measure
+              </div>
+
+              <div
+                id="427"
+                class="note"
+                data-title="Difference between Riemann and Lebesgue Integration"
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-description=""
+                data-image="images/RandLintegrals.png"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="wikipedia article"
+                data-identifier="[unique hashcode]"
+                data-source="Wikipedia"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://en.wikipedia.org/wiki/Lebesgue_integration#Limitations_of_the_Riemann_integral
+              </div>
+
+              <div
+                id="444"
+                class="note"
+                data-title="The details are pretty technical, this source gives a more fleshed out argument. See Example 1 to Example 4."
+                data-creator="joshfink429@gmail.com"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="generic"
+                data-identifier="[unique hashcode]"
+                data-source="Washington University"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://pages.wustl.edu/files/pages/imce/nachbar/integration.pdf?fbclid=IwAR2SjiDl6fku5JrPXtl75v-Au51SWDI5vHD8IN3mM_t5rcJUj_sXYZJX33E
+              </div>
+
+              <div
+                id="478"
+                class="note"
+                data-title="Chimera is a platform for discovering new ideas. <p style='font-weight: normal;'>The notes supplement educational videos with rich descriptions that provide immediate access to the concepts that are covered. For content-creators, videos now serve as a scaffold for dynamically evolving content. For students, annotations ear-mark points of interest within a video and link to additional resources. <br><br>Chimera is developed by Joshua Finkelstein and Nikolas Baya.</p>"
+                data-creator="joshfink429@gmail.com"
+                data-image="logos/star.png"
+                data-subject="5 Levels of Integration | Nathan Dalaklis"
+                data-publisher="Chimera Online Learning"
+                data-contributer="none"
+                data-date="30 May 2019"
+                data-type="link"
+                data-format="generic"
+                data-identifier="[unique hashcode]"
+                data-source="Find Out More"
+                data-language="en"
+                data-relation="5utybhhmpFk"
+                data-rights="Creative Commons">
+                https://chimeraeditor.com
+              </div>
+
+            </div>
+
+
+
+
+            <!-- take up remaining space -->
+            <div id="blank-paper"></div>
+
+            <div id="note-editor-input-container" style="
+              background-color: #584b4f;
+              border-radius: 3px;
+              width: calc(100% - 45px);
+              height: 50px;
+              margin: 5px;
+              position: absolute;
+              bottom: 10px;">
+            </div>
+              <div id="toggle-input-options" style="
+                bottom: 20px;
+                left: 20px;
+                border: 2px solid #efeae1;
+                border-radius: 3px;
+                width: 30px;
+                position: absolute;
+                height: 35px;
+                padding-left: 5px;
+                line-height: 45px;
+                cursor: pointer;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#efeae1" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+              </div>
+              <div id="input-options" style="
+                bottom: 20px;
+                left: 20px;
+                border: 2px solid #efeae1;
+                border-radius: 3px;
+                width: 30px;
+                position: absolute;
+                height: 35px;
+                padding-left: 5px;
+                line-height: 45px;">
+
+              </div>
+              <input type="text" placeholder="Feature Coming Soon" disabled style="
+                bottom: 20px;
+                background-color: antiquewhite;
+                left: 62px;
+                border: 2px solid #efeae1;
+                border-radius: 3px;
+                width: calc(100% - 105px);
+                position: absolute;
+                height: 33px;
+                padding-left: 5px;
+                line-height: 45px;">
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+      <div id="videoSection">
+        <div class="videoWrapper">
+          <div id="player"></div>
+        </div>
+        <div id="video-description">
+          <div id="video-info">
+            <img src="https://yt3.ggpht.com/a/AGF-l7_HlXcuAj13nSo-xg9irDBmOP0VaoxcAyQP=s88-mo-c-c0xffffffff-rj-k-no">
+            <div id="video-title">
+              <h4>CHALK</h4>
+              <h5>Nathan Dalaklis<h5>
+            </div>
+          </div>
+          <p>
+            Area, Riemann Sums, Integration formulas, Riemann integrability, and Lebesgue/Measure Theoretic Integrability are the same mathematical beast through different lenses at different levels of mathematical understanding and rigor. Usually you'd spend several years learning about these topics, and because of that, I decided to talk about them all in one video to try and connect/motivate each level based on the others.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+
+    <script src="videoplayer.js"></script>
+    <script src="noteeditor.js"></script>
+
+  </body>
+</html>
