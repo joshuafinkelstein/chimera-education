@@ -75,16 +75,16 @@ if (!isSecure()) {
         <br />
         <div class="content-subtitles">
           <p class="subtitle">
-            <img src='baseline-art_track-24px.svg'> Timestamped Notes
+            <img src='homepage-images/baseline-art_track-24px.svg'> Timestamped Notes
           </p>
           <p class="subtitle">
-            <img src="baseline-school-24px.svg"> Online Courses
+            <img src="homepage-images/baseline-school-24px.svg"> Online Courses
           </p>
           <p class="subtitle">
-            <img src="baseline-forum-24px.svg"> Community Forums
+            <img src="homepage-images/baseline-forum-24px.svg"> Community Forums
           </p>
           <p class="subtitle">
-            <img src="baseline-assistant-24px.svg"> Integrated AI
+            <img src="homepage-images/baseline-assistant-24px.svg"> Integrated AI
           </p>
         </div>
         <br />
@@ -99,6 +99,38 @@ if (!isSecure()) {
         <div class="line orange" style="width: 70%; float: right; bottom: 30px;"></div>
       </div>
     </div>
+
+    <div>
+
+    <div style="
+    display: flex;
+    /* margin: 10px auto; */
+    /* min-width: 100vw; */
+    /* width: 40%; */
+"><a href="https://github.com/joshuafinkelstein/chimera-education" style="
+    display: flex;
+    margin: 10px auto;
+    max-width: 100vw;
+    width: 450px;
+    min-width: 320px;
+">
+	<img src="https://cdn.pixabay.com/photo/2017/08/05/11/24/logo-2582757_960_720.png" style="
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+">
+
+<div style="
+    margin: auto 0;
+">
+    <h3>For the people by the people</h3><h5 style="
+    color: antiquewhite;
+">Join our community on GitHub</h5><br>
+<h5>Students | Educators | Software Developers</h5>
+</div>
+        </a>
+</div>
+</div>
 
     <div class="flex-container">
       <div class="flex-drawers">

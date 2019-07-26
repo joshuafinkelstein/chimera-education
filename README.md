@@ -35,6 +35,8 @@ Chimera maintains a dataset of a educational video metadata from sources such as
 The annotation tool is used for producing notes that are designed to be extensible with potential add-ons ranging from interactive notes to third-party app integrations. Notes follow a hierarchical formatting scheme with headers, descriptions and additional information. Focusing on a note unfolds it and displays an additional description. For example, links to Wikipedia articles provide an image, a header and additional information. The annotation tool currently supports links and will soon support images, files and LaTeX markup. Chimera will also offer a public-facing API that allows developers to build extensions on top of this framework. The annotations are synchronized with a video transcript and classroom discussion which provide an index for each video enabling search.
 
 ### Knowledge Extraction
+Chimera maintains an index of educational videos from YouTube. The index is based on metadata such as video titles and descriptions as well as transcripts and annotations. At the moment, this index includes videos from the MIT OpenCourseware channel. For each video, there is an additional index with associated timepoints that enables timepoint-specific video search for over 2000 MIT lectures and other videos.
+
 Reference youtube-dl to download video metadata from YouTube and other video hosting sites.
 
 Additional details on this subsystem will be provided soon.
