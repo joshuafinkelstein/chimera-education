@@ -10,10 +10,11 @@ var app = new Vue({
     videometa: {
       title: 'Untitled Video',
       channelPhoto: '../logos/star.png',
-      channel: 'Chimera Video Annotations',
-      author: 'Chimera Video Annotation Software',
+      channel: '',
+      author: '',
       description: 'Add a description through the Vue extension.',
-      default: true
+      default: true,
+      videoId: 'no value'
     },
     timepoint: 0,
     linkclicked: false,
@@ -120,15 +121,20 @@ var app = new Vue({
     // rudimentary router
     toggleDirectory: function() {
       console.log(document.getElementById('noteSection').style.display);
-      if(document.getElementById('noteSection').style.display == 'flex') {
-
+      if(document.getElementById('noteSection').style.display == 'flex' || document.getElementById('noteSection').style.display == '') {
         document.getElementById('noteSection').style.display = 'none';
         document.getElementById('videoSection').style.display = 'none';
         document.getElementById('directory').style.display = 'block';
+        // button
+        document.getElementById('directory-button').style.display = 'none';
+        document.getElementById('backtovideo-button').style.display = 'block';
       } else {
         document.getElementById('noteSection').style.display = 'flex';
         document.getElementById('videoSection').style.display = 'flex';
         document.getElementById('directory').style.display = 'none';
+        // button
+        document.getElementById('directory-button').style.display = 'block';
+        document.getElementById('backtovideo-button').style.display = 'none';
       }
     },
     //misc
@@ -167,8 +173,10 @@ var app = new Vue({
 
       if(status == 'none') {
         document.getElementById('login').style.display = 'block';
+        document.getElementById('main').style.opacity = '0.5';
       } else {
         document.getElementById('login').style.display = 'none';
+        document.getElementById('main').style.opacity = '1';
       }
     },
     //00:00 format timepoints
@@ -195,6 +203,10 @@ var app = new Vue({
       if(openingoptions != true && this.editing == false) {
         // don't jump to timepoint if user clicks to toggle note options
         timeJump(seconds);
+      }
+
+      if(this.editing == null) {
+        this.editing = false;
       }
     },
     //check if name-value pair is in data
@@ -425,7 +437,7 @@ var app = new Vue({
 
     },
     stopEditing: function() {
-      this.editing = false;
+      this.editing = null;
       this.modifying = null;
     },
     deleteNote: function(modifying) {

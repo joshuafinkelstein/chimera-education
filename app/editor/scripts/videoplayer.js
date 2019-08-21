@@ -44,7 +44,7 @@ function onPlayerReady(event) {
     app.videometa.title = video_data['title'];
   }
   app.videometa.videoId = videoID;
-  // console.log(video_data);
+  console.log(app.videometa.videoId);
 
 }
 

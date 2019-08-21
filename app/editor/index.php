@@ -19,7 +19,10 @@ if (!isSecure()) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <title>Chimera | video notes</title>
-    <link href='main.css' rel='stylesheet'>
+    <link href='styles/main.css' rel='stylesheet'>
+    <link href='styles/sharedstyles.css' rel='stylesheet'>
+    <link href='styles/notes.css' rel='stylesheet'>
+    <link href='styles/directory.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans|Open+Sans" rel="stylesheet">
@@ -68,12 +71,13 @@ if (!isSecure()) {
     <div id="app">
       <header>
         <a href="https://chimeraeditor.com">
-          <img id="chimera-logo" src="../logos/star.png" style="height: 40px; width: 40px; padding: 10px;">
+          <img id="chimera-logo" src="../logos/star.png" style="height: 40px; width: 40px; padding: 5px;">
         </a>
-        <svg v-on:click="changevideo()" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="white" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+        <svg v-on:click="changevideo()" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="white" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
         <nav id="options">
           <div class="flex"></div>
-          <svg v-on:click="toggleDirectory()" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="white" d="M9.17 6l2 2H20v10H4V6h5.17M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+          <svg id="directory-button" v-on:click="toggleDirectory()" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path fill="white" d="M9.17 6l2 2H20v10H4V6h5.17M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+          <svg id="backtovideo-button" v-on:click="toggleDirectory()" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="white" d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"/></svg>
           <img id="login-button" v-on:click="signIn()" src="images/blank-profile-picture.png">
         </nav>
       </header>
@@ -160,9 +164,6 @@ if (!isSecure()) {
             <div id="filename">
               {{ videometa.title }}
             </div>
-            <!-- <div class="toolbar">
-              <button class="secondary-button short-button bd-blue blue" v-on:click="publish()">Publish</button>
-            </div> -->
           </div>
 
 
@@ -338,47 +339,16 @@ if (!isSecure()) {
 
                 </div>
 
-
-
-                <!-- customer interview questions -->
-                <div class="note tab-container">
-                  <div class="contents">
-
-                    <div class="tab-handle">
-                      <img src="../logos/star.png">
-                      <div class="note-header">
-                        <b>We'd love to hear from you.</b>
-                        <br>
-                        <div>
-                          Chimera is being developed as a free software application for students and we want to make sure that what we're building is valuable to you! We have some questions below, but please feel free to reach out by email at josh@chimeraeditor.com or by phone at (802)503-5434.
-                        </div>
-                        <br>
-                        <form v-on:keyup.enter="submitFeedback()">
-                          {{askRandomQuestion()}} {{randomQuestion}}
-                          <textarea id="random-question" placeholder="Your feedback is invaluable."></textarea>
-
-                          Do you have any comments or questions?
-                          <textarea id="general-feedback" placeholder="Let's start a conversation. Leave an email address for a reply."></textarea>
-                          <br>
-                          <button v-on:click.prevent="submitFeedback()" class="primary-button" style="float: right; margin-right: calc(5% - 12px);">Submit</button>
-                          <br>
-                          <br>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
               </div>
 
               <!-- take up remaining space -->
               <div id="blank-paper"></div>
 
-              <div id="note-input-container">
-                <input type="text" id="note-input" v-model="input.value" v-on:keyup.enter="submitnote()" v-bind:placeholder="'add a note at ' + pptimepoint(timepoint) + ' (HINT: try a Wikipedia URL)'">
-              </div>
-
             </div>
+          </div>
+
+          <div id="note-input-container">
+            <input type="text" id="note-input" v-model="input.value" v-on:keyup.enter="submitnote()" v-bind:placeholder="'add a note at ' + pptimepoint(timepoint) + ' (HINT: try a Wikipedia URL)'">
           </div>
 
         </div>
@@ -392,16 +362,12 @@ if (!isSecure()) {
             <div id="video-info">
               <img v-bind:src="videometa.channelPhoto">
               <div id="video-title">
-                <h4>{{videometa.channel}}</h4>
-                <h5>{{videometa.author}}<h5>
+                <h4>{{videometa.title}}</h4>
+                <h5>{{videometa.channel}}<h5>
               </div>
             </div>
             <p>
               {{videometa.description}}
-            </p>
-            <h4>A Message from Chimera Video Annotations:</h4>
-            <p>
-              Please let us know what you think. There's a place to provide feedback at the bottom of the notes.
             </p>
           </div>
         </div>
@@ -444,8 +410,8 @@ if (!isSecure()) {
     integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
     crossorigin="anonymous"></script>
 
-    <script src="videoplayer.js"></script>
-    <script src="functions.js"></script>
+    <script src="scripts/videoplayer.js"></script>
+    <script src="scripts/functions.js"></script>
 
     <!-- Add the entire Firebase JavaScript SDK -->
     <script src="https://www.gstatic.com/firebasejs/6.3.0/firebase.js"></script>
@@ -453,13 +419,13 @@ if (!isSecure()) {
     <script>
       // Your web app's Firebase configuration
       var firebaseConfig = {
-        apiKey: "AIzaSyDxMRazrz1DpgfvaZpKJ9GON9YStwnMfGA",
-        authDomain: "chimera-e8803.firebaseapp.com",
-        databaseURL: "https://chimera-e8803.firebaseio.com",
-        projectId: "chimera-e8803",
+        apiKey: "",
+        authDomain: "",
+        databaseURL: "",
+        projectId: "",
         storageBucket: "",
-        messagingSenderId: "788713293552",
-        appId: "1:788713293552:web:1bf4c2fa5272f143"
+        messagingSenderId: "",
+        appId: ""
       };
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
@@ -484,168 +450,17 @@ if (!isSecure()) {
           // ...
         });
       }
-
-      // Check if the user has had a previous session
-      // if(firebase.auth().currentUser == null) {
-      //
-      //   var uiConfig = {
-      //     callbacks: {
-      //       signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-      //         // User successfully signed in.
-      //         // Return type determines whether we continue the redirect automatically
-      //         // or whether we leave that to developer to handle.
-      //         return true;
-      //       },
-      //       uiShown: function() {
-      //         // The widget is rendered.
-      //         // Hide the loader.
-      //         document.getElementById('loader').style.display = 'none';
-      //       }
-      //     },
-      //     // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
-      //     signInFlow: 'popup',
-      //     // signInSuccessUrl: '?auth=true&v='+videoID,
-      //     signInOptions: [
-      //       // Leave the lines as is for the providers you want to offer your users.
-      //       // firebase.auth.GoogleAuthProvider.PROVIDER_ID
-      //       {
-      //         provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-      //         requireDisplayName: true
-      //       }
-      //     ],
-      //     // Terms of service url.
-      //     tosUrl: '<your-tos-url>',
-      //     // Privacy policy url.
-      //     privacyPolicyUrl: 'https://chimeraeditor.com/privacy/Privacy%20Notice.pdf'
-      //   };
-      //
-      //   // Initialize the FirebaseUI Widget using Firebase.
-      //   var ui = new firebaseui.auth.AuthUI(firebase.auth());
-      //   // The start method will wait until the DOM is loaded.
-      //   ui.start('#firebaseui-auth-container', uiConfig);
-      // } else {
-      // }
-
-      var auth = null;
+      auth = null;
 
       // Get a reference to the database service
-      var database = firebase.database();
+      database = firebase.database();
     </script>
 
     <!-- vue.js-->
-    <script src="appview.js"></script>
-    <!-- <script src="router.js"></script> -->
+    <script src="scripts/app.js"></script>
 
-    <script>
-
-      var accesspoint = null;
-      setInterval(function() {
-        app.timepoint = elapsedTime;
-        if(app.input.value == '') {
-          app.input.timepoint = app.timepoint;
-          app.input.type = 'blank';
-        }
-      }, 1000)
-
-      //------------- ROUTING OF DATA -------------------
-      // get user info
-      firebase.auth().onAuthStateChanged(function(user) {
-        // display public directory
-        firebase.database().ref('published/').once('value').then(function(snapshot) {
-          app.directory.public = snapshot.val();
-        });
-
-        if (user) {
-            // User is signed in.
-            auth = firebase.auth();
-
-            // document.getElementsByClassName('mdl-card')[0].style.display = 'none';
-
-            document.getElementById('login-title').innerHTML = 'Switch Account';
-
-
-            var photoURL = auth.currentUser.photoURL;
-            var userPhoto = document.createElement('div.userphoto');
-            userPhoto.setAttribute('style', 'height: 20px; font-size: 22px; padding: 7px 15px 10px 13px; margin: 12px; width: 10px; background-color: darkblue; border-radius: 50%; font-family: Helvetica; cursor: pointer;');
-            userPhoto.innerHTML = user.email.substring(0,1).toUpperCase();
-            userPhoto.setAttribute('onclick', 'signIn();')
-            document.getElementById('options').replaceChild(userPhoto, document.getElementById('login-button'));
-
-            firebase.database().ref('users/'+auth.currentUser.uid+'/account').set(auth.currentUser.providerData[0]);
-
-            // display public directory
-            firebase.database().ref('users/'+auth.currentUser.uid+'/').once('value').then(function(snapshot) {
-              app.directory.private = snapshot.val();
-            });
-
-            //does the user already have a noteset for this video?
-            accesspoint = 'private';
-            firebase.database().ref('users/'+auth.currentUser.uid+'/notes/'+videoID+'/').once('value').then(function(snapshot) {
-              //the user has a private noteset
-              if(snapshot.val() != null) {
-                app.notes = pullNotes(snapshot);
-              } else {
-                //try to pull in a published noteset
-                firebase.database().ref('published/notes/'+videoID+'/').once('value').then(function(snapshot) {
-                  //is there a public noteset available?
-                  if(snapshot.val() != null) {
-                    app.notes = pullNotes(snapshot);
-                  } else {
-                    //cannot save data
-                    console.log('Signed in. No public noteset.');
-                  }
-                })
-              }
-            })
-            //does the user already have video metadata for this video?
-            firebase.database().ref('users/'+auth.currentUser.uid+'/notes/videometa'+videoID+'/').once('value').then(function(snapshot) {
-              if(snapshot.val() != null) {
-                app.videometa = snapshot.val();
-                app.videometa.default = false;
-                accesspoint = 'users/'+auth.currentUser.uid+'/notes/';
-              } else {
-                //try to pull in a published video metadata set
-                firebase.database().ref('published/notes/videometa'+videoID+'/').once('value').then(function(snapshot) {
-                  //is there is a published videometa available?
-                  if(snapshot.val() != null) {
-                    app.videometa = snapshot.val();
-                    app.videometa.default = false;
-                  } else {
-                    //cannot save data
-                    console.log('Signed in. No public video metadata.');
-                    firebase.database().ref('users/'+auth.currentUser.uid+'/notes/videometa'+videoID+'/').set(app.videometa);
-                  }
-                })
-              }
-            })
-          } else {
-            accesspoint = 'public';
-            // No user is signed in.
-            //annotations
-            firebase.database().ref('published/notes/'+videoID+'/').once('value').then(function(snapshot) {
-              //is there a public noteset available?
-              if(snapshot.val() != null) {
-                app.notes = pullNotes(snapshot);
-              } else {
-                //cannot save data
-                console.log('Not signed in. No public noteset.');
-              }
-            })
-            //video metadata
-            firebase.database().ref('published/notes/videometa'+videoID+'/').once('value').then(function(snapshot) {
-              //is there is a published videometa available?
-              if(snapshot.val() != null) {
-                app.videometa = snapshot.val();
-                app.videometa.default = false;
-              } else {
-                //cannot save data
-                console.log('Not signed in. No public video metadata.');
-              }
-            })
-          }
-      });
-
-    </script>
+    <!-- access control via firebase -->
+    <script src="scripts/firebase.js"></script>
 
   </body>
 </html>

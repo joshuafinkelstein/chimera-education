@@ -1,0 +1,46 @@
+#directory {
+  display: none;
+  flex: auto;
+  text-align: center;
+}
+
+#directory h3 {
+  width: 100%;
+  height: 20px;
+  margin: 30px 0;
+}
+
+#directory .file {
+  /* display: flex; */
+  background-color: white;
+  color: black;
+  font-size: 11px;
+  text-align: left;
+  padding: 14px;
+  max-width: 1000px;
+  margin: 5px auto;
+  box-shadow: 0 0 10px black;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#directory .file:hover {
+  background-color: #f4decb;
+  cursor: pointer;
+}
+
+.file .filetitle {
+  display: flex;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.filetitle svg {
+  min-width: 23px !important;
+  position: relative;
+  bottom: 4px;
+  margin: 0 5px;
+}
+
+.file .filechannel, .fileauthor {
+  padding-left: 32px;
+}

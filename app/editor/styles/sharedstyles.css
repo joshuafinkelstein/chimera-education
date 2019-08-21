@@ -1,0 +1,293 @@
+body {
+  margin: 0;
+  color: white;
+  font-family: 'Quicksand', sans-serif;
+  background-color: #584b4f;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Montserrat';
+  margin: 0px;
+  font-weight: normal;
+}
+
+/* colors */
+.blue {
+  color: #78b0a0 !important;
+}
+
+.brown {
+  color: #343233;
+}
+
+.chocolate {
+  color: #584b4f;
+}
+
+.yellow {
+  color: #ffd152;
+}
+
+.orange {
+  color: #ffa500;
+}
+
+.watermelon {
+  color: #ff3835;
+}
+
+.bg-blue {
+  background-color: #78b0a0;
+}
+
+.bg-brown {
+  background-color: #343233;
+}
+
+.bg-chocolate {
+  background-color: #584b4f;
+}
+
+.bg-yellow {
+  background-color: #ffd152;
+}
+
+.bg-orange {
+  background-color: #ffa500;
+}
+
+.bg-watermelon {
+  background-color: #ff3835;
+}
+
+.bd-blue {
+  border: 2px solid #78b0a0 !important;
+}
+
+.bd-brown {
+  border: 2px solid #343233;
+}
+
+.bd-chocolate {
+  border: 2px solid #584b4f;
+}
+
+.bd-yellow {
+  border: 2px solid #ffd152;
+}
+
+.bd-orange {
+  border: 2px solid #ffa500;
+}
+
+.bd-watermelon {
+  border: 2px solid #ff3835;
+}
+
+/* button styles */
+
+button {
+  height: 40px;
+  width: 100px;
+  color: #343233;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+}
+
+button p {
+  margin: 0 !important;
+}
+
+.primary-button {
+  background-color: #78b0a0;
+  border: 0;
+  height: 40px;
+  width: 100px;
+  color: white;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  text-shadow: 1px 1px 1px black;
+  box-shadow: 0 0 black;
+}
+
+.secondary-button {
+  background-color: inherit;
+  border: 2px solid #ffd152;
+  color: #ffd152;
+  margin-left: 5px;
+}
+
+.nooutline {
+  background-color: inherit !important;
+  border: 0 !important;
+}
+
+.short-button {
+  height: 25px !important;
+}
+
+.outline {
+  background-color: inherit !important;
+}
+
+.disable {
+  background-color: inherit !important;
+  border: 2px solid grey;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* colors */
+.fill-skyblue {
+  background-color: #cae8f2;
+}
+
+.fill-darkgrey {
+  background-color: #a9a9a9;
+}
+
+.fill-lightgrey {
+  background-color: #EFEFEF;
+}
+
+.fill-watermelon {
+  background-color: #ff3835;
+}
+
+.primary-highlight {
+  color: #78b0a0;
+}
+
+.hide {
+  display: none !important;
+}
+
+.highlighted {
+  background-color: #78b0a0;
+}
+
+.static:hover {
+  background-color: inherit;
+  cursor: auto;
+}
+
+
+
+
+
+
+
+
+
+
+/* ---------------------- header --------------------- */
+header {
+  display: flex;
+  font-family: 'Montserrat', sans-serif;
+  height: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #584b4f;
+  color: white;
+  /* border-bottom: 2px solid #584b4f; */
+}
+
+header h1 {
+  line-height: 60px;
+}
+
+header a {
+  display: flex;
+}
+
+.flex {
+  flex: auto;
+}
+
+header nav {
+  display: flex;
+  flex: none;
+  margin-left: auto;
+}
+
+header nav button {
+  background-color: #ffd152;
+  border: 2px solid #ffd152;
+  height: 40px;
+  width: 100px;
+  color: #343233;
+  cursor: pointer;
+  margin-left: 0;
+  margin-top: 10px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+header nav img {
+  margin: 5px 5px 5px 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+header svg {
+  margin: 5px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+#backtovideo-button {
+  display: none;
+}
+
+header svg:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+header h3 {
+  margin: auto;
+  font-weight: normal;
+}
+
+/*  modify notes */
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 0 2px black;
+  color: black;
+  margin: 15% auto;
+  padding: 10px;
+  border: 1px solid #888;
+  border-radius: 3px;
+  width: auto;
+  overflow: hidden;
+}
+
+/* footer */
+.footer {
+  display: flex;
+  padding: 10px;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+}

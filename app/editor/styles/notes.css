@@ -1,0 +1,332 @@
+
+ /* ------------------ basic structure ---------------------- */
+#note-editor-header {
+  background-color: #584b4f;
+  margin: 5px 5px 0 5px;
+  box-shadow: 1px 1px 1px black;
+  min-height: 35px;
+  color: #efeae1;
+  text-align: center;
+  padding: 8px 0 5px 0;
+  font-size: 14px;
+}
+
+.toolbar {
+  margin: 10px 5px 5px 5px;
+  float: right;
+  padding-right: 20px;
+}
+
+.toolbar .svgWrapper {
+  margin-right: 5px;
+  border: 1px solid #584b4f;
+}
+
+.toolbar .svgWrapper:hover {
+  cursor: pointer;
+  background-color: #423539;
+}
+
+#whole-paper {
+  margin: 0 5px 0 5px;
+  max-height: calc(100% - 110px);
+  display: flex;
+  flex: auto;
+  flex-flow: column;
+  box-shadow: 1px 1px 1px black;
+  color: black;
+  overflow-y: scroll;
+  background-color: white;
+}
+
+#paper-text {
+  padding: 5px 0 52px 0;
+  background-color: white;
+}
+
+#blank-paper {
+  background-color: white;
+  flex: auto;
+  min-height: 10px;
+}
+
+
+
+
+
+
+
+
+
+/* ---------------- notes ---------------------- */
+.note {
+  padding: 3px;
+  display: flex;
+  position: relative;
+  border: 1px solid white;
+  /* border-bottom: 1px solid lightgrey; */
+  font-size: 14px;
+  min-height: 19.2px;
+  /* max-height: 400px; */
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 12px;
+  word-break: break-word;
+  margin: 4px;
+  /* box-shadow: 0 0 1px #aaa; */
+}
+
+/* .note[data-type="text"] {
+  font-size: 15px;
+} */
+
+.note[data-type="blank"] {
+  border: 0;
+  box-shadow: none;
+}
+
+.note[data-type="blank"]:hover {
+  background-color: inherit;
+  cursor: auto;
+}
+
+.note:hover {
+  background-color: #f4decb;
+  border: 1px solid darkgrey;
+  box-shadow: 0 0 2px darkgrey;
+  cursor: pointer;
+}
+
+.note .time {
+  color: white;
+  min-width: 38px;
+  margin-right: 5px;
+  margin-left: 5px;
+  font-size: 11px;
+  margin-top: 1px;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.note:hover .time {
+  color: #282828;
+}
+
+.note .contents {
+  font-weight: inherit;
+  font-style: inherit;
+  text-decoration: inherit;
+  font-size: inherit;
+  color: inherit;
+  position: relative;
+  flex: auto;
+}
+
+
+
+
+/* -------------- note tabs ---------------- */
+.tab-container .tab-handle img {
+  height: 70px;
+  object-fit: cover;
+  width: 70px;
+  border-radius: 5px;
+  float: left;
+  margin-right: 20px;
+}
+
+.tab-container .tab-handle .playVideo {
+  position: absolute;
+  margin-right: 0 !important;
+  height: 30px !important;
+  width: auto;
+  object-fit: initial;
+  left: 20px;
+  top: 18px;
+  z-index: 2;
+}
+
+.tab-container .tab-handle .note-header {
+  padding-top: 10px;
+  padding-bottom: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-container a {
+  color: grey;
+  text-decoration: none;
+  /* border: 1px solid grey; */
+  padding: 3px 6px 3px 0;
+  margin-bottom: 6px;
+}
+
+.tab-container a:hover {
+  color: black;
+  text-decoration: none;
+  /* border: 1px solid black; */
+  padding: 3px 6px 3px 0;
+}
+
+.tab-container .tab-handle {
+  padding-bottom: 10px;
+  height: 100%;
+}
+
+.tab-container .contents .tab-moreinfo {
+  top: calc( -100% + 72px);
+  left: -51px;
+  position: relative;
+  z-index: 5;
+  height: auto;
+  max-height: 115px;
+  margin: 5px 10px 11px 10px;
+  overflow: hidden;
+  width: calc(100% + 35px);
+}
+
+.tab-moreinfo .fadecorner {
+  position: absolute;
+  top: calc(100% - 30px);
+  right: 0;
+  z-index: 6;
+  background-image: linear-gradient(to bottom right, rgba(244, 222, 203, 0), rgba(244,222,203, 1));
+  height: 30px;
+  width: 60px;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* ----------- toggle options for each note ---------------- */
+.modify-note {
+  height: 20px;
+  background-color: inherit;
+  position: absolute;
+  right: 5px;
+  top: 2px;
+}
+
+.modify-note .delete-note, .edit-note {
+  display: none;
+}
+
+.modify-note svg:hover .modify {
+  fill: black;
+}
+
+.modify-note svg {
+  height: 20px;
+}
+
+#modify-options {
+  display: none;
+  position: absolute;
+  padding: 20px;
+  margin: 0 !important;
+  left: calc(100% - 176px);
+  overflow: hidden;
+}
+
+#modify-options button {
+  height: 40px;
+  width: 100px;
+  border: 2px solid #EFEFEF;
+  background-color: #EFEFEF;
+  color: black;
+}
+
+
+
+
+
+
+
+
+/* ---------------- note style in editing mode ----------------- */
+.editing textarea {
+  border: none !important;
+  min-height: unset !important;
+  font-size: 15px;
+}
+
+.editing .isediting {
+  font-size: 12px;
+  color: grey;
+  margin: 14px;
+  float: right;
+}
+
+.editing button {
+  float: right;
+  margin: 10px 4.3%;
+}
+
+.editing .header {
+  font-weight: bold;
+  height: 25px !important;
+  resize: none !important;
+}
+
+.editing .description {
+  font-weight: normal;
+  resize: vertical !important;
+}
+
+.editing .linktitle {
+  font-weight: normal;
+  height: 22px !important;
+  font-size: 14px !important;
+  resize: none !important;
+}
+
+
+
+
+
+
+
+/* ------------------- note input ------------------- */
+#note-input-container {
+  background-color: #584b4f;
+  width: calc(100% - 20px);
+  height: 45px;
+  margin: 0 5px;
+  padding: 5px;
+}
+
+#note-input {
+  border: 0;
+  padding: 5px;
+  margin: 5px;
+  width: calc(100% - 20px);
+  height: 25px;
+  font-size: 15px;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+#note-editor-input-container {
+  display: flex;
+  background-color: #584b4f;
+  border-radius: 3px;
+  width: calc(100% - 45px);
+  margin: 5px;
+  position: absolute;
+  bottom: 10px;
+}
+
+#note-editor-input-container input {
+  margin: 5px 0 5px 5px;
+  background-color: #f5f5f5;
+  border: 2px solid #efeae1;
+  border-radius: 3px;
+  width: calc(100% - 105px);
+  height: 33px;
+  padding-left: 5px;
+  line-height: 45px;
+}

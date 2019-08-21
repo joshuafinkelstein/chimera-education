@@ -1,0 +1,127 @@
+.userphoto {
+  height: 20px;
+  font-size: 22px;
+  padding: 7px 15px 10px 13px;
+  margin: 5px 5px 5px 10px;
+  width: 10px;
+  background-color: darkblue;
+  border-radius: 50%;
+  font-family: Helvetica;
+  cursor: pointer;
+}
+
+#login {
+  display: none;
+  position: absolute;
+  right: 0px;
+  top: 50px;
+  color: black;
+}
+
+#login h4 {
+  text-align: center;
+  position: relative;
+  color: black;
+  z-index: 10;
+  background-color: white;
+  padding: 10px;
+}
+
+/* sign in  */
+#firebaseui-auth-container {
+  position: relative;
+  z-index: 5;
+  background-color: white;
+  padding: 10px;
+}
+
+.mdl-shadow--2dp {
+  box-shadow: none !important;
+}
+
+.firebaseui-provider-sign-in-footer>.firebaseui-tos {
+  color: black;
+}
+
+#main {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  min-height: calc(100vh - 52px);
+  background-color: #343233;
+}
+
+#noteSection {
+  position: sticky;
+  top: 0;
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-flow: column;
+  flex: auto;
+  width: 30%;
+  min-width: 310px;
+  /* max-width: 790px; */
+  align-self: end;
+  height: calc(100vh - 62px);
+  background-position: center;
+  color: black;
+  padding: 5px;
+  /* resize: horizontal; */
+  overflow: hidden;
+}
+
+#videoSection {
+  display: flex;
+  flex-direction: column;
+  width: 65%;
+  height: auto;
+  flex: auto;
+  padding-bottom: 0px;
+  /* resize: horizontal; */
+  overflow: hidden;
+}
+
+#video-description {
+  background-color: #efeae1;
+  opacity: 0.3;
+  color: black;
+  flex: auto;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 12px;
+  padding: 10px;
+}
+
+#video-description:hover {
+  opacity: 0.9;
+}
+
+#video-info {
+  display: flex;
+}
+
+#video-info img {
+  height: 60px;
+  width: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+#video-title {
+  padding: 15px 10px 10px 10px;
+}
+
+.videoWrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  padding-top: 7px;
+  padding-left: 13px;
+  margin-bottom: 0px;
+  height: 0px;
+}
+
+.videoWrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
