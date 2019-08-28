@@ -2,7 +2,7 @@
 
 Chimera is a learning platform based on educational videos available on YouTube. The platform features a tool to take **timestamped notes** on top of videos. In this way, each note serves as a bookmark to reference the original video segment. The goal is to provide a medium for students to directly interact and contribute to educational content on the internet.
 
-![Screenshot](screenshot-1.png)
+![Screenshot](https://github.com/joshuafinkelstein/chimera-education/blob/master/screenshot-1.PNG)
 
 This repository also includes a chrome extension to open YouTube videos on Chimera as well as a **YouTube scraper** for collecting video transcripts and an **indexing/search tool** for navigating this content.
 
