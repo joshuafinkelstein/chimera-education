@@ -12,7 +12,7 @@ var app = new Vue({
       channelPhoto: '../logos/star.png',
       channel: '',
       author: '',
-      description: 'Add a description through the Vue extension.',
+      description: '',
       default: true,
       videoId: 'no value'
     },
@@ -75,14 +75,27 @@ var app = new Vue({
     },
     videometa: {
       handler: function() {
-        // console.log('videometa watch');
+
         if(typeof this.videometa.default == 'undefined') {
           this.videometa.default = true;
         }
 
-        if(!this.videometa.default && typeof auth != 'undefined') {
-          if(auth != null) {
+        if(this.videometa.channel == 'MIT OpenCourseWare') {
+          this.videometa.channelPhoto = "https://yt3.ggpht.com/-R20NMGble7Q/AAAAAAAAAAI/AAAAAAAAAAA/jtkvXd3lm7o/s68-c-k-no-mo-rj-c0xffffff/photo.jpg";
+        } else if (this.videometa.channel == 'Udacity') {
+          this.videometa.channelPhoto = "https://yt3.ggpht.com/-slzOwsq8iv0/AAAAAAAAAAI/AAAAAAAAAAA/KMUFhY9BQXc/s68-c-k-no-mo-rj-c0xffffff/photo.jpg";
+        }
+
+        // save changes if signed in
+        if(typeof auth != 'undefined') {
+          console.log(this.videometa);
+          if(auth != null && videoID.length == 11) {
             firebase.database().ref('users/'+auth.currentUser.uid+'/notes/videometa'+videoID+'/').set(this.videometa);
+
+            // display private directory
+            firebase.database().ref('users/'+auth.currentUser.uid+'/').once('value').then(function(snapshot) {
+              app.directory.private = snapshot.val();
+            });
           }
         }
       },
@@ -126,15 +139,15 @@ var app = new Vue({
         document.getElementById('videoSection').style.display = 'none';
         document.getElementById('directory').style.display = 'block';
         // button
-        document.getElementById('directory-button').style.display = 'none';
-        document.getElementById('backtovideo-button').style.display = 'block';
+        // document.getElementById('directory-button').style.display = 'none';
+        // document.getElementById('backtovideo-button').style.display = 'block';
       } else {
         document.getElementById('noteSection').style.display = 'flex';
         document.getElementById('videoSection').style.display = 'flex';
         document.getElementById('directory').style.display = 'none';
         // button
-        document.getElementById('directory-button').style.display = 'block';
-        document.getElementById('backtovideo-button').style.display = 'none';
+        // document.getElementById('directory-button').style.display = 'block';
+        // document.getElementById('backtovideo-button').style.display = 'none';
       }
     },
     //misc
@@ -166,18 +179,20 @@ var app = new Vue({
     },
     //toggle sign in
     signIn: function() {
-      var status = document.getElementById('login').style.display;
-      if(status == '') {
-        status = 'none';
-      }
 
-      if(status == 'none') {
-        document.getElementById('login').style.display = 'block';
-        document.getElementById('main').style.opacity = '0.5';
-      } else {
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('main').style.opacity = '1';
-      }
+
+      // var status = document.getElementById('login').style.display;
+      // if(status == '') {
+      //   status = 'none';
+      // }
+      //
+      // if(status == 'none') {
+      //   document.getElementById('login').style.display = 'block';
+      //   document.getElementById('main').style.opacity = '0.5';
+      // } else {
+      //   document.getElementById('login').style.display = 'none';
+      //   document.getElementById('main').style.opacity = '1';
+      // }
     },
     //00:00 format timepoints
     pptimepoint: function(seconds) {
@@ -219,14 +234,6 @@ var app = new Vue({
     },
     test: function() {
       alert('it works');
-    },
-    //new video from url
-    changevideo: function() {
-      // console.log('here');
-      var id = prompt('Enter a videoID from YouTube');
-      if(id != null && id != '') {
-        window.location.href = "https://chimeraeditor.com/app/editor?v=" + id;
-      }
     },
     openFile: function(id) {
       window.location.href = "https://chimeraeditor.com/app/editor?v=" + id;
@@ -339,8 +346,26 @@ var app = new Vue({
         note.persist.url = this.input.value;
         note.persist.header = note.persist.url;
         note.persist.linktitle = 'Web Link';
-      }  else {
-        note.persist.description = this.input.value;
+      }
+      // text note
+      else {
+        var input_value = this.input.value;
+        // markdown support for header/description
+        if(input_value.substring(0,1) == '#'){
+          note.persist.header = input_value.substring(1,input_value.length);
+          note.persist.description = '';
+          // check if there is a description as well
+          var i = 0;
+          for(var char in input_value.substring(1,input_value.length)){
+            i++;
+            if(input_value.charAt(parseInt(char)+1) == '#'){ //start description
+              note.persist.header = input_value.substring(1,i);
+              note.persist.description = input_value.substring(i+1,input_value.length);
+            }
+          }
+        } else {
+          note.persist.description = this.input.value;
+        }
         note.persist.type = this.input.type;
       }
 

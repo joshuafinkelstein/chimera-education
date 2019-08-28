@@ -43,8 +43,14 @@ function onPlayerReady(event) {
   if(app.videometa.title =='Untitled Video') {
     app.videometa.title = video_data['title'];
   }
+
   app.videometa.videoId = videoID;
   console.log(app.videometa.videoId);
+
+  // jump to start point if specified
+  if(starttime != null){
+    timeJump(starttime);
+  }
 
 }
 
@@ -115,7 +121,12 @@ setInterval(function() {
 // 5. The API calls this function when the player's state changes.
 //    The function indicates that when playing a video (state=1)
 function onPlayerStateChange(event) {
-  // if (event.data == YT.PlayerState.PLAYING) {
+
+  if (event.data == YT.PlayerState.PLAYING) {
+    if(app.videometa.channel == '' || app.videometa.channel == 'Chimera Video Annotations'){
+      app.videometa.channel = player.getVideoData()['author'];
+    }
+  }
   //   ajaxRequest('php_functions/SQL/INSERT.php', {table: 'userbehavior', videoID: videoID, userID: userID, type: 'play', description: elapsedTime});
   // } else if (event.data == YT.PlayerState.ENDED) {
   //   ajaxRequest('php_functions/SQL/INSERT.php', {table: 'userbehavior', videoID: videoID, userID: userID, type: 'ended', description: null});

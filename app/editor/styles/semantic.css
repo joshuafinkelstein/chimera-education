@@ -1,0 +1,30 @@
+.ui.inverted.menu {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #584b4f;
+  margin-bottom: 0 !important;
+}
+
+.ui.modal {
+  width: 300px;
+  height: auto;
+  position: relative;
+}
+
+.ui.inverted.segment {
+  background-color: #584b4f;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#search-bar {
+  display: none;
+}
+
+#search-bar .ui.icon.input {
+  padding: 3px;
+}
+
+@media only screen and (max-width: 767px) {
+  .ui.items:not(.unstackable)>.item>.image, .ui.items:not(.unstackable)>.item>.image>img {
+    max-height: 50px !important;
+  }
+}

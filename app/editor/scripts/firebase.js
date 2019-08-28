@@ -19,18 +19,6 @@ firebase.auth().onAuthStateChanged(function(user) {
       // User is signed in.
       auth = firebase.auth();
 
-      // document.getElementsByClassName('mdl-card')[0].style.display = 'none';
-
-      document.getElementById('login-title').innerHTML = 'Switch Account';
-
-
-      var photoURL = auth.currentUser.photoURL;
-      var userPhoto = document.createElement('div.userphoto');
-      userPhoto.setAttribute('style', 'height: 20px; font-size: 22px; padding: 9px 16px 11px 14px; margin: 5px 5px 5px 10px; width: 10px; background-color: darkblue; border-radius: 50%; font-family: Helvetica; cursor: pointer;');
-      userPhoto.innerHTML = user.email.substring(0,1).toUpperCase();
-      userPhoto.setAttribute('onclick', 'signIn();')
-      document.getElementById('options').replaceChild(userPhoto, document.getElementById('login-button'));
-
       firebase.database().ref('users/'+auth.currentUser.uid+'/account').set(auth.currentUser.providerData[0]);
 
       // display public directory

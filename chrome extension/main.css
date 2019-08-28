@@ -1,0 +1,10 @@
+.ui.card {
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+  margin: 0;
+}
+
+html {
+  height: 250px;
+}

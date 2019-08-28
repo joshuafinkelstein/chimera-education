@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Chimera Learning Platform </title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <link href="main.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans|Open+Sans" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="ui card">
+      <div class="content">
+        <img class="right floated mini ui image" src="star.png">
+        <div class="header">
+          Chimera Learning Platform
+        </div>
+        <div class="meta">
+          Open YouTube video in Chimera.
+        </div>
+        <div id="chimera-link" class="description">
+          No video found on current tab. Go to <a href="https://youtube.com" target="_blank">youtube.com</a> to find videos.
+        </div>
+      </div>
+      <div class="extra content">
+        <div class="ui two buttons">
+          <div id="approve-button" class="ui basic green button disabled">Open</div>
+          <div id="deny-button" class="ui basic red button">Exit</div>
+        </div>
+      </div>
+    </div>
+    <script src="background.js"></script>
+  </body>
+</html>
