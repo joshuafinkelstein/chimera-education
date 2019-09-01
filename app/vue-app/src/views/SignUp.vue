@@ -51,7 +51,8 @@
 </template>
 
  <script>
-  import firebase from 'firebase';
+  const fb = require('../firebaseConfig.js');
+
   export default {
     name: 'signUp',
     data() {
@@ -64,7 +65,7 @@
     methods: {
       signUp: function() {
         if(this.password == this.retypePassword) {
-          firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(
+          fb.auth.createUserWithEmailAndPassword(this.email, this.password).then(
             function (user) {
               this.$router.replace('home')
             },

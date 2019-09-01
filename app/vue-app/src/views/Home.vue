@@ -28,19 +28,23 @@
 
 <script>
   import firebase from 'firebase';
+  import {db} from '../main';
+
+  // try {
+  //   db.ref('published').once('value').then(function(snapshot) {
+  //     // $el.publicDirectory = snapshot.val();
+  //     console.log(snapshot.val());
+  //   });
+  // } catch(err) {
+  //   console.log(err.message);
+  // }
+
+
+
   // @ is an alias to /src
-  import HelloWorld from '@/components/HelloWorld.vue'
+  // import HelloWorld from '@/components/HelloWorld.vue'
   export default {
     name: 'home',
-    data() {
-      return {
-        publicDirectory: [],
-        privateDirectory: []
-      }
-    },
-    components: {
-      HelloWorld
-    },
     methods: {
       logout: function() {
         firebase.auth().signOut().then(() => {

@@ -1,10 +1,10 @@
 <template>
   <div class="login ui middle aligned center aligned grid">
     <div class="column">
-      <h2 class="ui teal image header">
+      <h2 class="ui white image header">
         <img src="../assets/logo.png" class="image">
         <div class="content">
-          Choose an option to login
+          Chimera
         </div>
       </h2>
       <form v-on:submit.prevent class="ui large form">
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-  import firebase from 'firebase';
+  const fb = require('../firebaseConfig.js');
 
   export default {
     name: 'login',
@@ -58,8 +58,9 @@
     },
     methods: {
       emailSignIn: function() {
-        firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(
+        fb.auth.signInWithEmailAndPassword(this.email, this.password).then(
           (user) => {
+            this.$store.commit('setCurrentUser', user)
             this.$router.replace('home')
           },
           (err) => {
@@ -68,14 +69,16 @@
         );
       },
       googleSignIn: function() {
-        const provider = new firebase.auth.GoogleAuthProvider();
-
-        firebase.auth().signInWithPopup(provider).then((result) => {
+        fb.auth.signInWithPopup(fb.google).then((result) => {
           // This gives you a Google Access Token. You can use it to access the Google API.
           var token = result.credential.accessToken;
           // The signed-in user info.
           var user = result.user;
-          this.$router.replace('home');
+          this.$store.commit('setCurrentUser', user)
+
+          if(user) {
+            this.$router.replace('home');            
+          }
           // ...
         }).catch((error) => {
           // Handle Errors here.
@@ -132,6 +135,10 @@
   }
   .ui.horizontal.divider {
     color: white;
+  }
+  .ui.header.white {
+    color: white;
+    font-family: 'Montserrat', 'Lato';
   }
   .image {
     margin-top: -100px;
