@@ -13,7 +13,7 @@
           <div class="field">
             <div class="ui left icon input">
               <i class="user icon"></i>
-              <input type="text" name="email" v-model="email" placeholder="E-mail address">
+              <input type="text" name="email" v-model="email" placeholder="Email address">
             </div>
           </div>
           <div class="field">
@@ -29,7 +29,7 @@
         <div class="ui stacked segment">
           <h4 class="ui header">Sign In with Another Provider</h4>
           <div class="ui vertical segment">
-            <button @click="googleSignIn" class="ui fluid google button">
+            <button @click="googleSignIn" class="ui fluid red google button">
               <i class="google icon"></i>
               Sign in with Google
             </button>
@@ -59,38 +59,31 @@
     methods: {
       emailSignIn: function() {
         fb.auth.signInWithEmailAndPassword(this.email, this.password).then(
-          (user) => {
-            this.$store.commit('setCurrentUser', user)
-            this.$router.replace('home')
+          result => {
+            this.$store.commit('setCurrentUser', result)
+            this.$store.commit('setUserProfile', result.user.providerData[0])
+            this.$store.dispatch('fetchPublicDirectory')
+            this.$store.dispatch('fetchPrivateDirectory')
+            this.$router.replace('dashboard')
           },
-          (err) => {
-            console.log(err.message)
+          err => {
+            console.log(err)
           }
         );
       },
       googleSignIn: function() {
-        fb.auth.signInWithPopup(fb.google).then((result) => {
-          // This gives you a Google Access Token. You can use it to access the Google API.
-          var token = result.credential.accessToken;
-          // The signed-in user info.
-          var user = result.user;
-          this.$store.commit('setCurrentUser', user)
-
-          if(user) {
-            this.$router.replace('home');            
+        fb.auth.signInWithPopup(fb.google).then(
+          result => {
+            this.$store.commit('setCurrentUser', result)
+            this.$store.commit('setUserProfile', result.user.providerData[0])
+            this.$store.dispatch('fetchPublicDirectory')
+            this.$store.dispatch('fetchPrivateDirectory')
+            this.$router.replace('dashboard');
+          },
+          err => {
+            console.log(err)
           }
-          // ...
-        }).catch((error) => {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          // The email of the user's account used.
-          var email = error.email;
-          // The firebase.auth.AuthCredential type that was used.
-          var credential = error.credential;
-          // ...
-          console.log(error.message);
-        });
+        );
       }
     }
   }
@@ -139,6 +132,7 @@
   .ui.header.white {
     color: white;
     font-family: 'Montserrat', 'Lato';
+    font-weight: normal;
   }
   .image {
     margin-top: -100px;

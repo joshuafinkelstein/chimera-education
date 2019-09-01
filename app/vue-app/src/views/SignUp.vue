@@ -66,10 +66,14 @@
       signUp: function() {
         if(this.password == this.retypePassword) {
           fb.auth.createUserWithEmailAndPassword(this.email, this.password).then(
-            function (user) {
-              this.$router.replace('home')
+            result => {
+              this.$store.commit('setCurrentUser', result)
+              this.$store.commit('setUserProfile', result.user.providerData[0])
+              this.$store.dispatch('fetchPublicDirectory')
+              this.$store.dispatch('fetchPrivateDirectory')
+              this.$router.replace('dashboard')
             },
-            function (err) {
+            err => {
               alert('Oops. ' + err.message)
             }
           );

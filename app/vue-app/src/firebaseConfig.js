@@ -17,12 +17,9 @@ const auth = firebase.auth();
 const google = new firebase.auth.GoogleAuthProvider();
 const currentUser = auth.currentUser;
 
-const publicDirectory = db.ref('published');
-
 export {
   db,
   auth,
   google,
-  currentUser,
-  publicDirectory
+  currentUser
 }

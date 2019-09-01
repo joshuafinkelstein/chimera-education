@@ -8,6 +8,9 @@
   html {
     background-color: #343233;
   }
+  body {
+    background-color: inherit;
+  }
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
