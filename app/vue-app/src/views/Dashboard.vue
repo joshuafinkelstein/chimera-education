@@ -96,8 +96,6 @@
       return results == null ? null : results[1];
   }
 
-  // @ is an alias to /src
-  // import HelloWorld from '@/components/HelloWorld.vue'
   export default {
     name: 'dashboard',
     data() {

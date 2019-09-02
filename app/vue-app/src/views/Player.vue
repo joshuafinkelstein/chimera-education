@@ -27,7 +27,7 @@
     <!-- video notes main content -->
     <div id="main">
 
-      <div id="noteSection">
+      <div id="note-section">
         <div id="note-editor-header">
           <div id="filename">
             {{ currentVideo.metadata.title }}
@@ -38,6 +38,35 @@
         <div id="whole-paper">
           <div id="paper-text">
 
+            <div id="list-notes">
+              <div class="note tab-container" @click="timeJump(note.persist.timepoint)" v-for="note in sortedNotes" :data-type="note.persist.type" :data-index="note.persist.id" @keyup.shift.enter="stopEditing()">
+                <!-- each note type is encapsulated and must be listed here to show up -->
+                <div class="time" v-if="note.persist.type === 'blank'"></div>
+                <div class="time" v-else>{{ getPrettyPrintTime(note.persist.timepoint) }}</div>
+
+                <TextNote class="contents" v-if="note.persist.type === 'text'"
+                  :header="note.persist.header"
+                  :description="note.persist.description">
+                </TextNote>
+
+                <WikipediaNote class="contents" v-else-if="note.persist.type === 'Wikipedia'"
+                  :note="note.persist">
+                </WikipediaNote>
+
+                <LinkNote class="contents" v-else-if="note.persist.type === 'link'"
+                  :note="note.persist">
+                </LinkNote>
+
+                <YoutubeNote class="contents" v-else-if="note.persist.type === 'video'"
+                  :note="note.persist">
+                </YoutubeNote>
+
+                <ChimeraNote class="contents" v-else-if="note.persist.type === 'annotations'"
+                  :note="note.persist">
+                </ChimeraNote>
+
+              </div>
+            </div>
 
             <!-- take up remaining space -->
             <div id="blank-paper"></div>
@@ -46,7 +75,7 @@
         </div>
 
         <div id="note-input-container">
-          <input type="text" id="note-input">
+          <input type="text" id="note-input" :placeholder="'Add note at ' + prettyPrintTime">
         </div>
 
       </div>
@@ -54,7 +83,7 @@
 
       <div id="videoSection">
         <div class="videoWrapper">
-          <youtube :video-id="videoId" :player-vars="playerVars" ref="youtube" @ready="playerReady"></youtube>
+          <youtube :video-id="videoId" :player-vars="playerVars" ref="youtube" @ready="playerReady" @playing="playing"></youtube>
         </div>
         <div id="video-description">
           <div id="video-info">
@@ -89,7 +118,6 @@
       return false;
     }
   }
-
   //get properties from url
   function gup( name, url ) {
       if (!url) url = location.href;
@@ -100,16 +128,29 @@
       return results == null ? null : results[1];
   }
 
-
+  // import component for each type of note
+  import TextNote from '@/components/TextNote.vue'
+  import WikipediaNote from '@/components/WikipediaNote.vue'
+  import LinkNote from '@/components/LinkNote.vue'
+  import YoutubeNote from '@/components/YoutubeNote.vue'
+  import ChimeraNote from '@/components/ChimeraNote.vue'
 
   export default {
     name: 'player',
+    components: {
+      TextNote,
+      WikipediaNote,
+      LinkNote,
+      YoutubeNote,
+      ChimeraNote
+    },
     data() {
       return {
         searchQuery: '',
         videoId: this.$route.query.v,
         timestart: this.$route.query.t,
-        elapsedTime: null,
+        collectElapsedTime: null,
+        elapsedTime: 0,
         prettyPrintTime: '00:00',
         playerVars: {
           autoplay: 0,
@@ -169,11 +210,34 @@
           }
         }
         return output;
+      },
+      // arrange notes by timestamp
+      sortedNotes: function() {
+        var sortedKeys;
+        var notes = this.currentVideo.notes;
+        var output = {};
+        if(Object.keys(notes).length > 1) {
+          var sortedKeys = Object.keys(notes).sort(function(a, b) {
+            try {
+              return notes[a].persist.timepoint - notes[b].persist.timepoint;
+            } catch(err) {
+              console.log(err);
+            }
+          })
+
+          var i = 0;
+          for(var key = 0; key < Object.keys(sortedKeys).length; key++) {
+            output[i] = notes[sortedKeys[key]];
+            i++;
+          }
+          return output;
+        } else {
+          return notes;
+        }
       }
     },
-    created() {
-      this.getCurrentTime();
-      setInterval(this.getCurrentTime(), 1000);
+    beforeDestroy() {
+      clearInterval(this.collectElapsedTime);
     },
     methods: {
       logout() {
@@ -187,19 +251,6 @@
         } else {
           return true;
         }
-      },
-      openFile(id) {
-        // update history
-        this.history.push(id);
-        store.state.history = this.history;
-        if(store.state.index != null) {
-          store.state.index++;
-        } else {
-          store.state.index = 0
-        }
-
-        // open player
-        this.$router.replace({path: 'player', query: {v: id}});
       },
       displayFirstName(displayName) {
         if(displayName == null) {
@@ -252,42 +303,52 @@
       },
 
       // iframe player
-      getCurrentTime() {
-        try{
-          console.log(this);
-          this.player.getCurrentTime().then((time) => {
-            this.elapsedTime = Math.floor(time);
-
-            if (Math.floor(this.elapsedTime/60) >= 10) {
-              if (this.elapsedTime % 60 >= 10) {
-                this.prettyPrintTime = Math.floor(this.elapsedTime/60)+':'+this.elapsedTime%60;
-              }
-              else {
-                this.prettyPrintTime = Math.floor(this.elapsedTime/60)+':0'+this.elapsedTime%60;
-              }
-            }
-            else {
-              if (elapsedTime % 60 >= 10) {
-                this.prettyPrintTime = '0'+Math.floor(this.elapsedTime/60)+':'+this.elapsedTime%60;
-              }
-              else {
-                this.prettyPrintTime = '0'+Math.floor(this.elapsedTime/60)+':0'+this.elapsedTime%60;
-              }
-            }
-          })
-        } catch(err) {
-          console.log(err);
-        }
-      },
-      playerReady() {
+      playerReady(event) {
         Object.assign(document.getElementsByTagName('iframe')[0].style, {
          position: 'absolute',
          top: 0,
          left: 0,
          width: '100%',
          height: '100%'
-       });
-     }
+        });
+      },
+      async playing() {
+        this.collectElapsedTime = setInterval(() => {
+          this.player.getCurrentTime().then((time) => {
+            this.updateTime(time);
+          });
+        }, 1000);
+      },
+      updateTime(seconds) {
+        this.elapsedTime = Math.floor(seconds);
+        this.prettyPrintTime = this.getPrettyPrintTime(seconds);
+      },
+      getPrettyPrintTime(seconds) {
+        seconds = Math.floor(seconds);
+        var sec = seconds%60;
+        var min = Math.floor(seconds/60);
+        var hr = Math.floor(seconds/3600);
+        // 60 min or greater?
+        var ppt = '';
+        if(hr > 0) {
+          ppt += String(hr) + ':';
+        }
+
+        if(min < 10) {
+          ppt += '0' + String(min) + ':';
+        } else {
+          ppt += String(min) + ':';
+        }
+        if(sec < 10) {
+          ppt += '0' + String(sec);
+        } else {
+          ppt += String(sec);
+        }
+        return ppt;
+      },
+      timeJump(seconds) {
+        this.player.seekTo(seconds);
+      }
     }
   }
 </script>
@@ -332,7 +393,7 @@
     background-color: #343233;
   }
 
-  #noteSection {
+  #note-section {
     position: sticky;
     top: 0;
     font-family: 'Montserrat', sans-serif;
@@ -518,7 +579,6 @@
    margin-right: 5px;
    margin-left: 5px;
    font-size: 11px;
-   margin-top: 1px;
    font-family: 'Noto Sans', sans-serif;
  }
 
@@ -534,6 +594,7 @@
    color: inherit;
    position: relative;
    flex: auto;
+   text-align: left;
  }
 
 
