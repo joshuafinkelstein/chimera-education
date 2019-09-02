@@ -1,0 +1,729 @@
+<template>
+  <div class="player">
+    <!-- header -->
+    <div class="ui inverted menu">
+      <div class="ui container">
+        <a v-if="!hasValue(index)" id="toggle-back" class="disabled item"><i class="large arrow alternate circle left icon"></i></a>
+        <a v-else @click="goBack" id="toggle-back" class="item"><i class="large arrow alternate circle left icon"></i></a>
+        <a href="https://chimeraeditor.com" class="header item">
+          <img class="logo" src="../assets/logo.png">
+        </a>
+        <a @click="showSearch" id="toggle-search" class="item"><i class="search icon"></i></a>
+        <div id="search-bar" class="ui item fluid category search">
+          <div class="ui icon input">
+            <input @keyup.enter="closeSearch" v-model="searchQuery" class="prompt" type="text" placeholder="YouTube Video URL...">
+            <i class="search icon"></i>
+          </div>
+        </div>
+        <div id="toggle-account" class="ui right simple dropdown item">
+          <i class="user outline icon"></i> {{ displayFirstName(userProfile.displayName) }}
+          <div class="menu">
+            <a @click="logout" class="item">Logout</a>
+            <a class="item" href="https://chimeraeditor.com/privacy/Privacy%20Notice.pdf">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- video notes main content -->
+    <div id="main">
+
+      <div id="noteSection">
+        <div id="note-editor-header">
+          <div id="filename">
+            {{ currentVideo.metadata.title }}
+          </div>
+        </div>
+
+
+        <div id="whole-paper">
+          <div id="paper-text">
+
+
+            <!-- take up remaining space -->
+            <div id="blank-paper"></div>
+
+          </div>
+        </div>
+
+        <div id="note-input-container">
+          <input type="text" id="note-input">
+        </div>
+
+      </div>
+
+
+      <div id="videoSection">
+        <div class="videoWrapper">
+          <youtube :video-id="videoId" :player-vars="playerVars" ref="youtube" @ready="playerReady"></youtube>
+        </div>
+        <div id="video-description">
+          <div id="video-info">
+            <img v-bind:src="currentVideo.metadata.channelPhoto">
+            <div id="video-title">
+              <h4 class="ui header">{{currentVideo.metadata.title}}</h4>
+              <h5 class="ui header">{{currentVideo.metadata.channel}}</h5>
+            </div>
+          </div>
+          <div class="ui form">
+            <div class="field">
+              <textarea id="video-info-textarea" v-model="currentVideo.metadata.description" placeholder="Add a description..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+  const fb = require('../firebaseConfig.js');
+  import {store} from '../store'
+
+  // check if URL
+  function is_url(str) {
+    const regexp =  /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+    if (regexp.test(str)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //get properties from url
+  function gup( name, url ) {
+      if (!url) url = location.href;
+      name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+      var regexS = "[\\?&]"+name+"=([^&#]*)";
+      var regex = new RegExp( regexS );
+      var results = regex.exec( url );
+      return results == null ? null : results[1];
+  }
+
+
+
+  export default {
+    name: 'player',
+    data() {
+      return {
+        searchQuery: '',
+        videoId: this.$route.query.v,
+        timestart: this.$route.query.t,
+        elapsedTime: null,
+        prettyPrintTime: '00:00',
+        playerVars: {
+          autoplay: 0,
+          rel: 0,
+          showinfo: 1,
+          egm: 0,
+          showsearch: 0,
+          controls: 1,
+          modestbranding: 1,
+          enablejsapi: 1
+        }
+      }
+    },
+    computed: {
+      // get data from store
+      userProfile() {
+        return store.state.userProfile
+      },
+      privateDirectory() {
+        return store.state.privateDirectory
+      },
+      publicDirectory() {
+        return store.state.publicDirectory
+      },
+      // save history and current index in history
+      history() {
+        return store.state.history
+      },
+      index() {
+        return store.state.index
+      },
+      // private or public file being accessed
+      privacy() {
+        if(typeof this.$route.query.privacy == 'undefined') {
+          return 'public';
+        } else {
+          return 'private';
+        }
+      },
+      player() {
+        return this.$refs.youtube.player
+      },
+      currentVideo() {
+        var output = {
+          notes: null,
+          metadata: null
+        }
+        var temp;
+        if(this.privacy == 'public') {
+          for(const key in this.publicDirectory.notes) {
+            temp = this.publicDirectory.notes[key];
+            if(key == this.videoId) {
+              output.notes = temp;
+            } else if(key.length > 11 && key.substring(key.length-11, key.length) == this.videoId) {
+              output.metadata = temp;
+            }
+          }
+        }
+        return output;
+      }
+    },
+    created() {
+      this.getCurrentTime();
+      setInterval(this.getCurrentTime(), 1000);
+    },
+    methods: {
+      logout() {
+        fb.auth.signOut().then(() => {
+          this.$router.replace('login')
+        })
+      },
+      hasValue(val) {
+        if(val == false || val == '' || val == null) {
+          return false;
+        } else {
+          return true;
+        }
+      },
+      openFile(id) {
+        // update history
+        this.history.push(id);
+        store.state.history = this.history;
+        if(store.state.index != null) {
+          store.state.index++;
+        } else {
+          store.state.index = 0
+        }
+
+        // open player
+        this.$router.replace({path: 'player', query: {v: id}});
+      },
+      displayFirstName(displayName) {
+        if(displayName == null) {
+          return 'Account';
+        }
+        return displayName.split(" ")[0];
+      },
+      showSearch() {
+        document.getElementById('toggle-search').style.display = 'none';
+        var width = window.innerWidth;
+        if (width < 900) {
+          document.getElementById('toggle-back').style.display = 'none';
+          document.getElementById('toggle-account').style.display = 'none';
+        }
+        document.getElementById('search-bar').style.display = 'flex';
+      },
+      closeSearch() {
+        // go to new video
+        var id = this.searchQuery;
+        this.searchQuery = '';
+        if(is_url(id)) { // accept url as input
+          id = gup('v',id);
+        }
+        if(id != null && id != '' && id.length == 11) { // meets loose specifications for video id
+          // update history
+          this.history.push(id);
+          store.state.history = this.history;
+          if(store.state.index != null) {
+            store.state.index++;
+          } else {
+            store.state.index = 0
+          }
+          // open player
+          this.$router.replace({path: 'player', query: {v: id}});
+        }
+        // revert header buttons
+        document.getElementById('search-bar').style.display = 'none';
+        document.getElementById('toggle-back').style.display = 'flex';
+        document.getElementById('toggle-account').style.display = 'flex';
+        document.getElementById('toggle-search').style.display = 'flex';
+      },
+      goBack() {
+        // update history
+        this.history.pop(this.history.length-1);
+        store.state.history = this.history;
+        store.state.index--;
+        // open player
+        var id = this.history[this.index];
+        this.$router.replace({path: 'player', query: {v: id}});
+      },
+
+      // iframe player
+      getCurrentTime() {
+        try{
+          console.log(this);
+          this.player.getCurrentTime().then((time) => {
+            this.elapsedTime = Math.floor(time);
+
+            if (Math.floor(this.elapsedTime/60) >= 10) {
+              if (this.elapsedTime % 60 >= 10) {
+                this.prettyPrintTime = Math.floor(this.elapsedTime/60)+':'+this.elapsedTime%60;
+              }
+              else {
+                this.prettyPrintTime = Math.floor(this.elapsedTime/60)+':0'+this.elapsedTime%60;
+              }
+            }
+            else {
+              if (elapsedTime % 60 >= 10) {
+                this.prettyPrintTime = '0'+Math.floor(this.elapsedTime/60)+':'+this.elapsedTime%60;
+              }
+              else {
+                this.prettyPrintTime = '0'+Math.floor(this.elapsedTime/60)+':0'+this.elapsedTime%60;
+              }
+            }
+          })
+        } catch(err) {
+          console.log(err);
+        }
+      },
+      playerReady() {
+        Object.assign(document.getElementsByTagName('iframe')[0].style, {
+         position: 'absolute',
+         top: 0,
+         left: 0,
+         width: '100%',
+         height: '100%'
+       });
+     }
+    }
+  }
+</script>
+
+<style scoped>
+  .ui.inverted.menu {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #584b4f;
+    margin-bottom: 0 !important;
+  }
+
+  .ui.modal {
+    width: 300px;
+    height: auto;
+    position: relative;
+  }
+
+  .ui.inverted.segment {
+    background-color: #584b4f;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  #search-bar {
+    display: none;
+  }
+
+  #search-bar .ui.icon.input {
+    padding: 3px;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .ui.items:not(.unstackable)>.item>.image, .ui.items:not(.unstackable)>.item>.image>img {
+      max-height: 50px !important;
+    }
+  }
+
+
+  #main {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    min-height: calc(100vh - 52px);
+    background-color: #343233;
+  }
+
+  #noteSection {
+    position: sticky;
+    top: 0;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-flow: column;
+    flex: auto;
+    width: 30%;
+    min-width: 310px;
+    /* max-width: 790px; */
+    align-self: end;
+    height: calc(100vh - 37px);
+    min-height: 320px;
+    background-position: center;
+    color: black;
+    padding: 10px;
+    /* resize: horizontal; */
+    overflow: hidden;
+  }
+
+  #videoSection {
+    display: flex;
+    flex-direction: column;
+    width: 65%;
+    height: auto;
+    flex: auto;
+    padding-bottom: 0px;
+    /* resize: horizontal; */
+    overflow: hidden;
+  }
+
+  #video-description {
+    background-color: #efeae1;
+    opacity: 0.3;
+    color: black;
+    flex: auto;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  #video-description:hover {
+    opacity: 0.9;
+  }
+
+  #video-info {
+    display: flex;
+    font-weight: normal !important;
+    font-family: 'Montserrat', 'Lato';
+    text-align: left;
+  }
+
+  #video-info img {
+    height: 60px;
+    width: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  #video-title {
+    padding: 15px 10px 10px 10px;
+  }
+
+  #video-title h4, h5 {
+    margin: 0 !important;
+  }
+
+  #video-title h5 {
+    color: grey;
+  }
+
+  #video-info-textarea {
+    background-color: inherit;
+    border: none;
+  }
+
+  .videoWrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 7px;
+    padding-left: 13px;
+    margin-bottom: 0px;
+    height: 0px;
+  }
+
+  /* ------------------ basic structure ---------------------- */
+ #note-editor-header {
+   background-color: #584b4f;
+   height: 50px;
+   overflow-y: hidden;
+   color: #efeae1;
+   text-align: center;
+   padding: 8px 0 5px 0;
+   font-size: 14px;
+ }
+
+ .toolbar {
+   margin: 10px 5px 5px 5px;
+   float: right;
+   padding-right: 20px;
+ }
+
+ .toolbar .svgWrapper {
+   margin-right: 5px;
+   border: 1px solid #584b4f;
+ }
+
+ .toolbar .svgWrapper:hover {
+   cursor: pointer;
+   background-color: #423539;
+ }
+
+ #whole-paper {
+   /* margin: 0 5px 0 5px; */
+   max-height: calc(100% - 110px);
+   display: flex;
+   flex: auto;
+   flex-flow: column;
+   color: black;
+   overflow-y: scroll;
+   background-color: white;
+ }
+
+ #paper-text {
+   padding: 5px 0 52px 0;
+   background-color: white;
+ }
+
+ #blank-paper {
+   background-color: white;
+   flex: auto;
+   min-height: 10px;
+ }
+
+
+
+
+
+
+
+
+
+ /* ---------------- notes ---------------------- */
+ .note {
+   padding: 3px;
+   display: flex;
+   position: relative;
+   border: 1px solid white;
+   /* border-bottom: 1px solid lightgrey; */
+   font-size: 14px;
+   min-height: 19.2px;
+   /* max-height: 400px; */
+   font-family: 'Noto Sans', sans-serif;
+   font-size: 12px;
+   word-break: break-word;
+   margin: 4px;
+   /* box-shadow: 0 0 1px #aaa; */
+ }
+
+ /* .note[data-type="text"] {
+   font-size: 15px;
+ } */
+
+ .note[data-type="blank"] {
+   border: 0;
+   box-shadow: none;
+ }
+
+ .note[data-type="blank"]:hover {
+   background-color: inherit;
+   cursor: auto;
+ }
+
+ .note:hover {
+   background-color: #f4decb;
+   border: 1px solid darkgrey;
+   box-shadow: 0 0 2px darkgrey;
+   cursor: pointer;
+ }
+
+ .note .time {
+   color: white;
+   min-width: 38px;
+   margin-right: 5px;
+   margin-left: 5px;
+   font-size: 11px;
+   margin-top: 1px;
+   font-family: 'Noto Sans', sans-serif;
+ }
+
+ .note:hover .time {
+   color: #282828;
+ }
+
+ .note .contents {
+   font-weight: inherit;
+   font-style: inherit;
+   text-decoration: inherit;
+   font-size: inherit;
+   color: inherit;
+   position: relative;
+   flex: auto;
+ }
+
+
+
+
+ /* -------------- note tabs ---------------- */
+ .tab-container .tab-handle img {
+   height: 70px;
+   object-fit: cover;
+   width: 70px;
+   border-radius: 5px;
+   float: left;
+   margin-right: 20px;
+ }
+
+ .tab-container .tab-handle .playVideo {
+   position: absolute;
+   margin-right: 0 !important;
+   height: 30px !important;
+   width: auto;
+   object-fit: initial;
+   left: 20px;
+   top: 18px;
+   z-index: 2;
+ }
+
+ .tab-container .tab-handle .note-header {
+   padding-top: 10px;
+   padding-bottom: 5px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+ }
+
+ .tab-container a {
+   color: grey;
+   text-decoration: none;
+   /* border: 1px solid grey; */
+   padding: 3px 6px 3px 0;
+   margin-bottom: 6px;
+ }
+
+ .tab-container a:hover {
+   color: black;
+   text-decoration: none;
+   /* border: 1px solid black; */
+   padding: 3px 6px 3px 0;
+ }
+
+ .tab-container .tab-handle {
+   padding-bottom: 10px;
+   height: 100%;
+ }
+
+ .tab-container .contents .tab-moreinfo {
+   top: calc( -100% + 72px);
+   left: -51px;
+   position: relative;
+   z-index: 5;
+   height: auto;
+   max-height: 115px;
+   margin: 5px 10px 11px 10px;
+   overflow: hidden;
+   width: calc(100% + 35px);
+ }
+
+ .tab-moreinfo .fadecorner {
+   position: absolute;
+   top: calc(100% - 30px);
+   right: 0;
+   z-index: 6;
+   background-image: linear-gradient(to bottom right, rgba(244, 222, 203, 0), rgba(244,222,203, 1));
+   height: 30px;
+   width: 60px;
+ }
+
+
+
+
+
+
+
+
+
+
+
+ /* ----------- toggle options for each note ---------------- */
+ .modify-note {
+   height: 20px;
+   background-color: inherit;
+   position: absolute;
+   right: 5px;
+   top: 2px;
+ }
+
+ .modify-note .delete-note, .edit-note {
+   display: none;
+ }
+
+ .modify-note svg:hover .modify {
+   fill: black;
+ }
+
+ .modify-note svg {
+   height: 20px;
+ }
+
+ #modify-options {
+   display: none;
+   position: absolute;
+   padding: 20px;
+   margin: 0 !important;
+   left: calc(100% - 176px);
+   overflow: hidden;
+ }
+
+ #modify-options button {
+   height: 40px;
+   width: 100px;
+   border: 2px solid #EFEFEF;
+   background-color: #EFEFEF;
+   color: black;
+ }
+
+
+
+
+
+
+
+
+ /* ---------------- note style in editing mode ----------------- */
+ .editing textarea {
+   border: none !important;
+   min-height: unset !important;
+   font-size: 12px;
+   font-family: 'Noto Sans', sans-serif;
+   width: 95%;
+ }
+
+ .editing .isediting {
+   font-size: 12px;
+   color: grey;
+   margin: 14px;
+   float: right;
+ }
+
+ .editing button {
+   float: right;
+   margin: 10px 4.3%;
+ }
+
+ .editing .header {
+   font-weight: bold;
+   height: 25px !important;
+   resize: none !important;
+ }
+
+ .editing .description {
+   font-weight: normal;
+   resize: vertical !important;
+ }
+
+ .editing .linktitle {
+   font-weight: normal;
+   height: 22px !important;
+   font-size: 14px !important;
+   resize: none !important;
+ }
+
+
+
+
+
+
+
+ /* ------------------- note input ------------------- */
+ #note-input-container {
+   background-color: #584b4f;
+   width: 100%;
+   height: 45px;
+   /* margin: 0 5px; */
+   padding: 5px;
+ }
+
+ #note-input {
+   border: 0;
+   padding: 5px;
+   width: 100%;
+   height: 35px;
+   font-size: 12px;
+   font-family: 'Noto Sans', sans-serif;
+ }
+</style>

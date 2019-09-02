@@ -9,15 +9,16 @@ export const store = new Vuex.Store({
       currentUser: null,
       userProfile: {},
       publicDirectory: {},
-      privateDirectory: {}
+      privateDirectory: {},
+      history: [],
+      index: null
+    },
+    getters: {
+      getPublicVideoDataById: (state) => (id) => {
+        return state.publicDirectory.find(file => file.id === id)
+      }
     },
     actions: {
-      clearData({ commit }) {
-        commit('setCurrentUser', null)
-        commit('setUserProfile', null)
-        commit('setPublicDirectory', null)
-        commit('setPrivateDirectoy', null)
-      },
       fetchPublicDirectory({ commit }) {
         fb.db.ref('published').once('value').then(function(snapshot) {
           commit('setPublicDirectory', snapshot.val())
@@ -45,6 +46,12 @@ export const store = new Vuex.Store({
       },
       setPrivateDirectory(state, val) {
         state.privateDirectory = val
+      },
+      appendToHistory(state, val) {
+        state.history.append(val)
+      },
+      setIndex(state, val) {
+        state.index = val
       }
     }
 })

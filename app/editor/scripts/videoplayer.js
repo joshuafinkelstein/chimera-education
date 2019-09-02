@@ -85,38 +85,11 @@ setInterval(function() {
         prettyPrintTime = '0'+Math.floor(elapsedTime/60)+':0'+elapsedTime%60;
       }
     }
-
-    // var array_of_elements = document.getElementsByClassName('note');
-    // var element = '';
-    // for(var i = 0; i < array_of_elements.length; i++) {
-    //   element = array_of_elements[i];
-    //   if(element.id == elapsedTime && track_video == true) {
-    //     current_highlight = element;
-    //     track_video = false;
-    //     var paper_offset = offset(document.getElementById('whole-paper'));
-    //     var paper_scroll = document.getElementById('whole-paper').scrollTop;
-    //     var highlight_offset = offset(current_highlight);
-    //     // console.log('note is at '+highlight_offset.top);
-    //     // console.log('paper is at '+paper_offset.top);
-    //     // console.log('scroll at '+paper_scroll);
-    //     $('#whole-paper').scrollTop(paper_scroll+highlight_offset.top - paper_offset.top, 'slow');
-    //   }
-    //
-    //   element.style.boxShadow = 'none';
-    //   element.style.padding = '3px';
-    // }
-    //
-    // if(track_video == false && current_highlight.id != elapsedTime) {
-    //   track_video = true;
-    // }
-    //
-    // current_highlight.style.boxShadow = '0 0 10px black';
-    // current_highlight.style.padding = '5px';
   }
   catch(err) {
     // console.log(err.message);
   }
-  }, 1000);
+}, 1000);
 
 // 5. The API calls this function when the player's state changes.
 //    The function indicates that when playing a video (state=1)

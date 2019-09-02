@@ -3,14 +3,15 @@
     <!-- header -->
     <div class="ui inverted menu">
       <div class="ui container">
-        <a id="toggle-back" class="disabled item"><i class="large arrow alternate circle left icon"></i></a>
+        <a v-if="!hasValue(index)" id="toggle-back" class="disabled item"><i class="large arrow alternate circle left icon"></i></a>
+        <a v-else @click="goBack" id="toggle-back" class="item"><i class="large arrow alternate circle left icon"></i></a>
         <a href="https://chimeraeditor.com" class="header item">
           <img class="logo" src="../assets/logo.png">
         </a>
-        <a id="toggle-search" class="item"><i class="search icon"></i></a>
+        <a @click="showSearch" id="toggle-search" class="item"><i class="search icon"></i></a>
         <div id="search-bar" class="ui item fluid category search">
           <div class="ui icon input">
-            <input class="prompt" type="text" placeholder="YouTube Video URL...">
+            <input @keyup.enter="closeSearch" v-model="searchQuery" class="prompt" type="text" placeholder="YouTube Video URL...">
             <i class="search icon"></i>
           </div>
         </div>
@@ -75,49 +76,9 @@
   const fb = require('../firebaseConfig.js');
   import {store} from '../store'
 
-  // @ is an alias to /src
-  // import HelloWorld from '@/components/HelloWorld.vue'
-  export default {
-    name: 'dashboard',
-    computed: {
-      userProfile() {
-        return store.state.userProfile
-      },
-      privateDirectory() {
-        return store.state.privateDirectory
-      },
-      publicDirectory() {
-        return store.state.publicDirectory
-      }
-    },
-    methods: {
-      logout() {
-        fb.auth.signOut().then(() => {
-          this.$router.replace('login')
-        })
-      },
-      hasValue(val) {
-        if(val == false || val == '' || val == null) {
-          return false;
-        } else {
-          return true;
-        }
-      },
-      openFile(id) {
-        window.location.href = "https://chimeraeditor.com/app/editor?v=" + id;
-      },
-      displayFirstName(displayName) {
-        if(displayName == null) {
-          return 'Account';
-        }
-        return displayName.split(" ")[0];
-      }
-    }
-  }
-
   // check if URL
   function is_url(str) {
-    regexp =  /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+    const regexp =  /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
     if (regexp.test(str)) {
       return true;
     } else {
@@ -135,40 +96,111 @@
       return results == null ? null : results[1];
   }
 
-  $(document).ready(function() {
-
-      // toggle search bar
-      $('#toggle-search').on('click', function() {
-        $('#toggle-search').hide();
-        width = $(window).width();
-        if (width < 900) {
-          $('#toggle-back').hide();
-          $('#toggle-account').hide();
+  // @ is an alias to /src
+  // import HelloWorld from '@/components/HelloWorld.vue'
+  export default {
+    name: 'dashboard',
+    data() {
+      return {
+        searchQuery: ''
+      }
+    },
+    computed: {
+      // get data from store
+      userProfile() {
+        return store.state.userProfile
+      },
+      privateDirectory() {
+        return store.state.privateDirectory
+      },
+      publicDirectory() {
+        return store.state.publicDirectory
+      },
+      // save history and current index in history
+      history() {
+        return store.state.history
+      },
+      index() {
+        return store.state.index
+      }
+    },
+    methods: {
+      logout() {
+        fb.auth.signOut().then(() => {
+          this.$router.replace('login')
+        })
+      },
+      hasValue(val) {
+        if(val == false || val == '' || val == null) {
+          return false;
+        } else {
+          return true;
         }
-        $('#search-bar').show();
-      })
-      // // close
-      // $('#search-bar').find('input').keypress(function (e) {
-      //   if (e.which == 13) {
-      //     // go to new video
-      //     var id = $('#search-bar').find('input').val();
-      //     $('#search-bar').find('input').val('');
-      //     // get if from url
-      //     if(is_url(id)) {
-      //       id = gup('v',id);
-      //     }
-      //
-      //     if(id != null && id != '') {
-      //       window.location.href = "https://chimeraeditor.com/app/editor?v=" + id;
-      //     }
-      //     // revert header buttons
-      //     $('#search-bar').hide();
-      //     $('#toggle-search').show();
-      //     $('#toggle-directory').show();
-      //     $('#toggle-account').show();
-      //   }
-      // });
-    });
+      },
+      openFile(id) {
+        // update history
+        this.history.push(id);
+        store.state.history = this.history;
+        if(store.state.index != null) {
+          store.state.index++;
+        } else {
+          store.state.index = 0
+        }
+
+        // open player
+        this.$router.replace({path: 'player', query: {v: id}});
+      },
+      displayFirstName(displayName) {
+        if(displayName == null) {
+          return 'Account';
+        }
+        return displayName.split(" ")[0];
+      },
+      showSearch() {
+        document.getElementById('toggle-search').style.display = 'none';
+        var width = window.innerWidth;
+        if (width < 900) {
+          document.getElementById('toggle-back').style.display = 'none';
+          document.getElementById('toggle-account').style.display = 'none';
+        }
+        document.getElementById('search-bar').style.display = 'flex';
+      },
+      closeSearch() {
+        // go to new video
+        var id = this.searchQuery;
+        this.searchQuery = '';
+        if(is_url(id)) { // accept url as input
+          id = gup('v',id);
+        }
+        if(id != null && id != '' && id.length == 11) { // meets loose specifications for video id
+          // update history
+          this.history.push(id);
+          store.state.history = this.history;
+          if(store.state.index != null) {
+            store.state.index++;
+          } else {
+            store.state.index = 0
+          }
+          // open player
+          this.$router.replace({path: 'player', query: {v: id}});
+        }
+        // revert header buttons
+        document.getElementById('search-bar').style.display = 'none';
+        document.getElementById('toggle-back').style.display = 'flex';
+        document.getElementById('toggle-account').style.display = 'flex';
+        document.getElementById('toggle-search').style.display = 'flex';
+      },
+      goBack() {
+        // update history
+        this.history.pop(this.history.length-1);
+        store.state.history = this.history;
+        store.state.index--;
+        // open player
+        var id = this.history[this.index];
+        this.$router.replace({path: 'player', query: {v: id}});
+      }
+    }
+  }
 </script>
 
 <style scoped>

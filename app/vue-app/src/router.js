@@ -5,6 +5,7 @@ import Router from 'vue-router';
 import Dashboard from '@/views/Dashboard';
 import Login from '@/views/Login';
 import SignUp from '@/views/SignUp';
+import Player from '@/views/Player';
 
 Vue.use(Router);
 
@@ -33,6 +34,14 @@ const router = new Router({
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/player',
+      name: 'Player',
+      component: Player,
       meta: {
         requiresAuth: true
       }

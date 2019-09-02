@@ -3,6 +3,9 @@ import App from './App.vue';
 import router from './router';
 import { store } from './store.js';
 const fb = require('./firebaseConfig.js')
+import VueYoutube from 'vue-youtube'
+
+Vue.use(VueYoutube)
 
 Vue.config.productionTip = false;
 
@@ -17,7 +20,6 @@ fb.auth.onAuthStateChanged(() => {
       render: h => h(App)
     }).$mount('#app');
   }
-
 });
 
 new Vue({
