@@ -22,6 +22,7 @@
     name: 'WikipediaNote',
     props: {
       note: Object,
+      editing: Boolean
     },
     data() {
       return {
@@ -42,11 +43,12 @@
         // pull extract from Wikipedia
         if(this.note.extract == 'pulling info from Wikipedia') {
           var url = new URL(this.note.url);
-          var articleName = this.url.pathname.split('/')[2].replace('_', '%20');
+          var articleName = url.pathname.split('/')[2].replace('_', '%20');
           //ajax request and run function on response
-          Vue.axios.get('https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&explaintext&redirects=1&format=json&origin=*&titles=' + articleName).then(function(response) {
+          const self = this;
+          this.axios.get('https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&explaintext&redirects=1&format=json&origin=*&titles=' + articleName).then(function(response) {
             for (const key of Object.keys(response.data.query.pages)) {
-              this.note.extract = response.data.query.pages[key].extract;
+              self.note.extract = response.data.query.pages[key].extract;
               break;
             }
           });
@@ -71,7 +73,7 @@
       retrieveHeader() {
         if(!this.note.header) {
           var url = new URL(this.note.url);
-          this.note.header = this.note.url.pathname.split('/')[2].replace('_', ' ');
+          this.note.header = url.pathname.split('/')[2].replace('_', ' ');
         }
         return this.note.header;
       },
@@ -80,12 +82,13 @@
         if(!this.note.image) {
           var url = new URL(this.note.url);
           var articleName = url.pathname.split('/')[2].replace('_', '%20');
-          Vue.axios.get('https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&pithumbsize=100&redirects=1&format=json&origin=*&titles=' + articleName).then(function(response) {
+          const self = this;
+          this.axios.get('https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&pithumbsize=100&redirects=1&format=json&origin=*&titles=' + articleName).then(function(response) {
             for (const key of Object.keys(response.data.query.pages)) {
               try {
-                this.note.image = response.data.query.pages[key].thumbnail.source;
+                self.note.image = response.data.query.pages[key].thumbnail.source;
               } catch(err) {
-                this.note.image = 'https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1024px-Wikipedia-logo-v2.svg.png';
+                self.note.image = 'https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1024px-Wikipedia-logo-v2.svg.png';
               }
               break;
             }

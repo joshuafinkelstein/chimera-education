@@ -3,8 +3,8 @@
     <!-- header -->
     <div class="ui inverted menu">
       <div class="ui container">
-        <a v-if="!hasValue(index)" id="toggle-back" class="disabled item"><i class="large arrow alternate circle left icon"></i></a>
-        <a v-else @click="goBack" id="toggle-back" class="item"><i class="large arrow alternate circle left icon"></i></a>
+        <!-- <a v-if="!hasValue(index)" id="toggle-back" class="disabled item"><i class="large arrow alternate circle left icon"></i></a>
+        <a v-else @click="goBack" id="toggle-back" class="item"><i class="large arrow alternate circle left icon"></i></a> -->
         <a href="https://chimeraeditor.com" class="header item">
           <img class="logo" src="../assets/logo.png">
         </a>
@@ -29,7 +29,7 @@
       <div class="ui segment">
         <h3 class="ui header">Private Files</h3>
         <div v-if="hasValue(privateDirectory)" class="ui items">
-          <div class="item file" v-if="hasValue(file.title)" v-for="file in privateDirectory.notes" v-on:click="openFile(file.videoId)">
+          <div class="item file" v-if="hasValue(file.title)" v-for="file in privateDirectory.notes" v-on:click="openFile(file.videoId, 'private')">
             <div class="ui mini image">
               <img v-bind:src="file.channelPhoto">
             </div>
@@ -52,7 +52,7 @@
       <div class="ui segment">
         <h3 class="ui header">Public Files</h3>
         <div class="ui items">
-          <div class="item file" v-if="hasValue(file.title)" v-for="file in publicDirectory.notes" v-on:click="openFile(file.videoId)">
+          <div class="item file" v-if="hasValue(file.title)" v-for="file in publicDirectory.notes" v-on:click="openFile(file.videoId, 'public')">
             <div class="ui mini image">
               <img v-bind:src="file.channelPhoto">
             </div>
@@ -135,7 +135,7 @@
           return true;
         }
       },
-      openFile(id) {
+      openFile(id, privacy) {
         // update history
         this.history.push(id);
         store.state.history = this.history;
@@ -146,7 +146,7 @@
         }
 
         // open player
-        this.$router.replace({path: 'player', query: {v: id}});
+        this.$router.replace({path: 'player', query: {v: id, privacy: privacy}});
       },
       displayFirstName(displayName) {
         if(displayName == null) {

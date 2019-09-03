@@ -3,8 +3,7 @@
     <!-- header -->
     <div class="ui inverted menu">
       <div class="ui container">
-        <a v-if="!hasValue(index)" id="toggle-back" class="disabled item"><i class="large arrow alternate circle left icon"></i></a>
-        <a v-else @click="goBack" id="toggle-back" class="item"><i class="large arrow alternate circle left icon"></i></a>
+        <a @click="toggleDashboard" id="toggle-back" class="item"><i class="large arrow alternate circle left icon"></i></a>
         <a href="https://chimeraeditor.com" class="header item">
           <img class="logo" src="../assets/logo.png">
         </a>
@@ -46,24 +45,35 @@
 
                 <TextNote class="contents" v-if="note.persist.type === 'text'"
                   :header="note.persist.header"
-                  :description="note.persist.description">
+                  :description="note.persist.description"
+                  :editing="note.editing">
                 </TextNote>
 
                 <WikipediaNote class="contents" v-else-if="note.persist.type === 'Wikipedia'"
-                  :note="note.persist">
+                  :note="note.persist"
+                  :editing="note.editing">
                 </WikipediaNote>
 
                 <LinkNote class="contents" v-else-if="note.persist.type === 'link'"
-                  :note="note.persist">
+                  :note="note.persist"
+                  :editing="note.editing">
                 </LinkNote>
 
                 <YoutubeNote class="contents" v-else-if="note.persist.type === 'video'"
-                  :note="note.persist">
+                  :note="note.persist"
+                  :editing="note.editing">
                 </YoutubeNote>
 
                 <ChimeraNote class="contents" v-else-if="note.persist.type === 'annotations'"
-                  :note="note.persist">
+                  :note="note.persist"
+                  :editing="note.editing">
                 </ChimeraNote>
+
+                <div class="modify-note fluid">
+                  <i class="ellipsis horizontal icon toggle-additional-options" @click="toggleNoteEditOptions(note.persist.id)"></i>
+                  <i class="pencil icon edit-note" @click="toggleEditMode(note.persist.id)"></i>
+                  <i class="trash icon delete-note" @click="deleteNote(note.persist.id)"></i>
+                </div>
 
               </div>
             </div>
@@ -75,7 +85,7 @@
         </div>
 
         <div id="note-input-container">
-          <input type="text" id="note-input" :placeholder="'Add note at ' + prettyPrintTime">
+          <input type="text" v-model="newNoteValue" @keyup.enter="submitNote" id="note-input" :placeholder="'Add note at ' + prettyPrintTime">
         </div>
 
       </div>
@@ -152,6 +162,9 @@
         collectElapsedTime: null,
         elapsedTime: 0,
         prettyPrintTime: '00:00',
+        newNoteValue: '',
+        timestartNewNote: null,
+        disableTimeJump: false,
         playerVars: {
           autoplay: 0,
           rel: 0,
@@ -185,9 +198,9 @@
       // private or public file being accessed
       privacy() {
         if(typeof this.$route.query.privacy == 'undefined') {
-          return 'public';
+          return 'public'; // default to public
         } else {
-          return 'private';
+          return this.$route.query.privacy;
         }
       },
       player() {
@@ -195,8 +208,8 @@
       },
       currentVideo() {
         var output = {
-          notes: null,
-          metadata: null
+          notes: {},
+          metadata: {}
         }
         var temp;
         if(this.privacy == 'public') {
@@ -208,7 +221,19 @@
               output.metadata = temp;
             }
           }
+        } else {
+          for(const key in this.privateDirectory.notes) {
+            temp = this.privateDirectory.notes[key];
+            if(key == this.videoId) {
+              output.notes = temp;
+            } else if(key.length > 11 && key.substring(key.length-11, key.length) == this.videoId) {
+              output.metadata = temp;
+            }
+          }
         }
+        // update last opened timestamp
+        output.metadata.lastOpened = Date.now();
+    
         return output;
       },
       // arrange notes by timestamp
@@ -238,6 +263,29 @@
     },
     beforeDestroy() {
       clearInterval(this.collectElapsedTime);
+    },
+    watch: {
+      currentVideo: {
+        handler: function() {
+          for(const key in this.currentVideo.notes) {
+            if(this.currentVideo.notes[key] != null) {
+              this.currentVideo.notes[key].persist.id = key;
+              if(typeof this.currentVideo.notes[key].editing == 'undefined') {
+                this.currentVideo.notes[key].editing = false;
+              }
+            }
+          }
+        },
+        deep: true,
+        immediate: true
+      },
+      newNoteValue() {
+        if(this.newNoteValue == '' && this.timestartNewNote != null) {
+          this.timestartNewNote = null;
+        } else if(this.timestartNewNote == null) {
+          this.timestartNewNote = this.elapsedTime;
+        }
+      }
     },
     methods: {
       logout() {
@@ -292,14 +340,8 @@
         document.getElementById('toggle-account').style.display = 'flex';
         document.getElementById('toggle-search').style.display = 'flex';
       },
-      goBack() {
-        // update history
-        this.history.pop(this.history.length-1);
-        store.state.history = this.history;
-        store.state.index--;
-        // open player
-        var id = this.history[this.index];
-        this.$router.replace({path: 'player', query: {v: id}});
+      toggleDashboard() {
+        this.$router.replace('dashboard');
       },
 
       // iframe player
@@ -311,6 +353,10 @@
          width: '100%',
          height: '100%'
         });
+
+        if(typeof this.timestart != 'undefined') {
+          this.timeJump(this.timestart);
+        }
       },
       async playing() {
         this.collectElapsedTime = setInterval(() => {
@@ -347,7 +393,131 @@
         return ppt;
       },
       timeJump(seconds) {
-        this.player.seekTo(seconds);
+        if(!this.disableTimeJump) {
+          this.player.seekTo(seconds);
+        } else {
+          this.disableTimeJump = false;
+        }
+      },
+      submitNote() {
+        var val = this.newNoteValue;
+        this.newNoteValue = '';
+        var note = {};
+        note.persist = {};
+        note.persist.timepoint = this.timestartNewNote;
+        note.persist.header = false;
+        note.persist.description = false;
+        note.persist.image = false;
+
+        //check for special cases
+        //wikipedia
+        if(val.substring(0,30) == 'https://en.wikipedia.org/wiki/') {
+          note.persist.type = 'Wikipedia';
+          note.persist.url = val;
+          note.persist.linktitle = 'Wikipedia Page';
+          note.persist.extract = 'pulling info from Wikipedia';
+        }
+        //Chimera
+        else if (val.substring(0,25) == 'https://chimeraeditor.com') {
+          note.persist.type = 'annotations';
+          note.persist.url = val;
+          note.persist.linktitle = 'Annotated Video';
+          note.persist.header = note.persist.url;
+          note.persist.image = '..logos/star.png';
+        }
+        //YouTube video
+        else if (val.substring(0,24) == 'https://www.youtube.com/') {
+          note.persist.type = 'video';
+          note.persist.url = val;
+          note.persist.header = note.persist.url;
+          note.persist.linktitle = 'YouTube Video';
+          note.persist.image = 'images/youtube.png';
+        }
+        //generic link
+        else if (val.substring(0,8) == 'https://') {
+          note.persist.type = 'link';
+          note.persist.url = val;
+          note.persist.header = note.persist.url;
+          note.persist.linktitle = 'Web Link';
+        }
+        // text note
+        else {
+          // markdown support for header/description
+          if(val.substring(0,1) == '#'){
+            note.persist.header = val.substring(1,val.length);
+            note.persist.description = '';
+            // check if there is a description as well
+            var i = 0;
+            for(var char in val.substring(1,val.length)){
+              i++;
+              if(val.charAt(parseInt(char)+1) == '#'){ //start description
+                note.persist.header = val.substring(1,i);
+                note.persist.description = val.substring(i+1,val.length);
+              }
+            }
+          } else {
+            note.persist.description = val;
+          }
+          // default to text note
+          note.persist.type = 'text';
+        }
+
+        // append to notes locally
+        var maxkey = 0;
+        for(const key in this.currentVideo.notes) {
+          if(parseInt(key) > maxkey) {
+            maxkey = parseInt(key);
+          }
+        }
+        if(this.currentVideo.notes.length != 0) {
+          maxkey += 1;
+        }
+        if(this.privacy == 'private') {
+          this.$set(this.currentVideo.notes, maxkey, note);
+          // sync local notes with database
+          if(fb.auth.currentUser != null) {
+            fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/'+this.videoId).set(this.currentVideo.notes);
+            this.$store.dispatch('fetchPrivateDirectory');
+          }
+        } else {
+          console.log('You can only make changes to your private data.');
+          fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/'+this.videoId).set(this.currentVideo.notes);
+          fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/videometa'+this.videoId).set(this.currentVideo.metadata);
+          this.$store.dispatch('fetchPrivateDirectory');
+          this.$router.replace({path: 'player', query: {v: this.videoId, privacy: 'private', t: this.elapsedTime}});
+        }
+
+        // reset timepoint for new notes
+        this.timestartNewNote = null;
+      },
+      toggleNoteEditOptions(noteId) {
+        this.disableTimeJump = true;
+        var el = document.querySelectorAll("[data-index='"+String(noteId)+"']")[0].getElementsByClassName('modify-note')[0];
+        el.getElementsByClassName('toggle-additional-options')[0].style.display = 'none';
+        el.getElementsByClassName('edit-note')[0].style.display = 'inline-flex';
+        el.getElementsByClassName('delete-note')[0].style.display = 'inline-flex';
+        // hide options after 2 seconds
+        var end = false;
+        var toggleOptions = setInterval(() => {
+          if(end) {
+            el.getElementsByClassName('toggle-additional-options')[0].style.display = 'inline-flex';
+            el.getElementsByClassName('edit-note')[0].style.display = 'none';
+            el.getElementsByClassName('delete-note')[0].style.display = 'none';
+            clearInterval(toggleOptions);
+          }
+          end = true;
+        }, 2000)
+      },
+      toggleEditMode(noteId) {
+        this.disableTimeJump = true;
+        this.currentVideo.notes[noteId].editing = !this.currentVideo.notes[noteId].editing;
+      },
+      deleteNote(noteId) {
+        this.disableTimeJump = true;
+        if(this.privacy == 'private') {
+          this.$delete(this.currentVideo.notes, noteId);
+          fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/'+this.videoId+'/'+noteId+'/').set(null);
+        }
       }
     }
   }

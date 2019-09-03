@@ -18,6 +18,7 @@
     name: 'LinkNote',
     props: {
       note: Object,
+      editing: Boolean
     },
     methods: {
       hasValue(val) {

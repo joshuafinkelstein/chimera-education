@@ -13,7 +13,8 @@
     name: 'TextNote',
     props: {
       header: [String, Boolean],
-      description: [String, Boolean]
+      description: [String, Boolean],
+      editing: Boolean
     },
     methods: {
       hasValue(val) {

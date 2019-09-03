@@ -1,3 +1,5 @@
 test/MathJax
 
 index/downloaded_transcripts/
+
+app/vue-app/src/firebaseConfig.js
