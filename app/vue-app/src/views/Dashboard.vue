@@ -29,9 +29,10 @@
       <div class="ui segment">
         <h3 class="ui header">Private Files</h3>
         <div v-if="hasValue(privateDirectory)" class="ui items">
-          <div class="item file" v-if="hasValue(file.title)" v-for="file in privateDirectory.notes" v-on:click="openFile(file.videoId, 'private')">
+          <div class="item file" v-if="hasValue(file.title)" v-for="file in sortedPrivateDirectory" v-on:click="openFile(file.videoId, 'private')">
             <div class="ui mini image">
-              <img v-bind:src="file.channelPhoto">
+              <img v-if="hasValue(file.channelPhoto)" v-bind:src="file.channelPhoto">
+              <img v-else src="../assets/logo.png">
             </div>
             <div class="content">
               <div class="header">{{ file.title }}</div>
@@ -120,6 +121,40 @@
       },
       index() {
         return store.state.index
+      },
+      sortedPrivateDirectory() {
+        var sortedKeys;
+        var privateDirectory = {};
+        for(var item in this.privateDirectory.notes) {
+          if(item.substring(0,9) == 'videometa' && item.length == 20) { // file metadata
+            privateDirectory[item] = this.privateDirectory.notes[item];
+          }
+        }
+        var output = {};
+        if(Object.keys(privateDirectory).length > 1) {
+          var sortedKeys = Object.keys(privateDirectory).sort(function(a, b) {
+            try {
+              if(typeof privateDirectory[a].lastOpened != 'undefined' && typeof privateDirectory[b].lastOpened != 'undefined') {
+                return privateDirectory[b].lastOpened - privateDirectory[a].lastOpened;
+              } else if(typeof privateDirectory[a].lastOpened != 'undefined') {
+                return -1;
+              } else if(typeof privateDirectory[b].lastOpened != 'undefined') {
+                return 1;
+              }
+            } catch(err) {
+              console.log(err);
+            }
+          })
+
+          var i = 0;
+          for(var key = 0; key < Object.keys(sortedKeys).length; key++) {
+            output[i] = privateDirectory[sortedKeys[key]];
+            i++;
+          }
+          return output;
+        } else {
+          return privateDirectory;
+        }
       }
     },
     methods: {
@@ -180,7 +215,7 @@
             store.state.index = 0
           }
           // open player
-          this.$router.replace({path: 'player', query: {v: id}});
+          this.$router.replace({path: 'player', query: {v: id, privacy: 'private'}});
         }
         // revert header buttons
         document.getElementById('search-bar').style.display = 'none';

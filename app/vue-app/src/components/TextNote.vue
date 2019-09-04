@@ -1,10 +1,20 @@
 <template>
-  <div class="TextNote">
-    <b v-if="hasValue(header)">
-      {{ header }}
+  <!-- view mode -->
+  <div v-if="!note.editing" class="TextNote">
+    <b v-if="hasValue(note.persist.header)">
+      {{ note.persist.header }}
     </b>
-    <br v-if="hasValue(header)">
-    {{ description }}
+    <br v-if="hasValue(note.persist.header)">
+    {{ note.persist.description }}
+  </div>
+  <!-- editing mode -->
+  <div v-else class="TextNote" @keyup.shift.enter="submitEdit">
+    <b>
+      <textarea id="edit-header" placeholder="Add a header..." @keydown="resize" @keyup="resize">{{ note.persist.header }}</textarea>
+    </b>
+    <br>
+    <textarea id="edit-description" placeholder="Add a description...">{{ note.persist.description }}</textarea>
+    <div class="editing-tip" @click="submitEdit">Press Shift+Enter<i class="large check circle icon"></i></div>
   </div>
 </template>
 
@@ -12,9 +22,7 @@
   export default {
     name: 'TextNote',
     props: {
-      header: [String, Boolean],
-      description: [String, Boolean],
-      editing: Boolean
+      note: Object
     },
     methods: {
       hasValue(val) {
@@ -23,6 +31,16 @@
         } else {
           return true;
         }
+      },
+      resize(event) {
+        var textareaElement = event.target;
+        // textareaElement.style.height = 'auto';
+        textareaElement.style.height = textareaElement.scrollHeight+'px';
+      },
+      submitEdit() {
+        this.note.persist.header = document.getElementById('edit-header').value;
+        this.note.persist.description = document.getElementById('edit-description').value;
+        this.note.editing = false;
       }
     }
   }
@@ -98,5 +116,24 @@
     background-image: linear-gradient(to bottom right, rgba(244, 222, 203, 0), rgba(244,222,203, 1));
     height: 30px;
     width: 60px;
+  }
+
+  /* editing mode */
+  textarea {
+    font-size: inherit;
+    font-weight: inherit;
+    background-color: inherit;
+    width: 100%;
+    border-color: rgba(27,28,29,0.2);
+    resize: none;
+    overflow: hidden;
+    line-height: 0.25;
+    padding-top: 6px;
+  }
+  .editing-tip {
+    width: 110px;
+    font-size: 10px;
+    text-align: right;
+    float: right;
   }
 </style>

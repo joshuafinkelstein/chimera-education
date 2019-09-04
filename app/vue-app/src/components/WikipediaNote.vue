@@ -1,18 +1,38 @@
 <template>
-  <div class="WikipediaNote" @mouseover="showExtract" @mouseleave="hideExtract">
+  <div v-if="!note.editing" class="WikipediaNote" @mouseover="showExtract" @mouseleave="hideExtract">
     <div class="tab-handle">
       <img :src="retrieveImage()">
       <div class="note-header">
         <b>{{ retrieveHeader() }}</b>
         <br>
-        <div v-if="hasValue(note.description)">{{note.description}}</div>
+        <div v-if="hasValue(note.persist.description)">{{note.persist.description}}</div>
         <br>
-        <a :href="note.url" target="_blank">{{note.linktitle}}</a>
+        <a :href="note.persist.url" target="_blank">{{note.persist.linktitle}}</a>
       </div>
     </div>
     <div class="tab-moreinfo" v-if="showingExtract">
-      {{ note.extract }}
+      {{ note.persist.extract }}
       <div class="fadecorner"></div>
+    </div>
+  </div>
+
+  <div v-else class="WikipediaNote" @mouseover="showExtract" @mouseleave="hideExtract">
+    <div class="tab-handle">
+      <img :src="retrieveImage()">
+      <div class="note-header">
+        <b>
+          <textarea id="edit-header" placeholder="Add a header..." @keydown="resize" @keyup="resize">{{ note.persist.header }}</textarea>
+        </b>
+        <br>
+        <div>
+          <textarea id="edit-description" placeholder="Add a description...">{{ note.persist.description }}</textarea>
+        </div>
+        <br>
+        <a :href="note.persist.url" target="_blank">
+          {{note.persist.linktitle}}
+        </a>
+      </div>
+      <div class="editing-tip" @click="submitEdit">Press Shift+Enter<i class="large check circle icon"></i></div>
     </div>
   </div>
 </template>
@@ -21,8 +41,7 @@
   export default {
     name: 'WikipediaNote',
     props: {
-      note: Object,
-      editing: Boolean
+      note: Object
     },
     data() {
       return {
@@ -41,14 +60,14 @@
       },
       showExtract() {
         // pull extract from Wikipedia
-        if(this.note.extract == 'pulling info from Wikipedia') {
-          var url = new URL(this.note.url);
+        if(this.note.persist.extract == 'pulling info from Wikipedia') {
+          var url = new URL(this.note.persist.url);
           var articleName = url.pathname.split('/')[2].replace('_', '%20');
           //ajax request and run function on response
           const self = this;
           this.axios.get('https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&explaintext&redirects=1&format=json&origin=*&titles=' + articleName).then(function(response) {
             for (const key of Object.keys(response.data.query.pages)) {
-              self.note.extract = response.data.query.pages[key].extract;
+              self.note.persist.extract = response.data.query.pages[key].extract;
               break;
             }
           });
@@ -71,33 +90,43 @@
       },
       //article title from Wikipedia
       retrieveHeader() {
-        if(!this.note.header) {
-          var url = new URL(this.note.url);
-          this.note.header = url.pathname.split('/')[2].replace('_', ' ');
+        if(!this.note.persist.header) {
+          var url = new URL(this.note.persist.url);
+          this.note.persist.header = url.pathname.split('/')[2].replace('_', ' ');
         }
-        return this.note.header;
+        return this.note.persist.header;
       },
       //main image from wikipedia article
       retrieveImage() {
-        if(!this.note.image) {
-          var url = new URL(this.note.url);
+        if(!this.note.persist.image) {
+          var url = new URL(this.note.persist.url);
           var articleName = url.pathname.split('/')[2].replace('_', '%20');
           const self = this;
           this.axios.get('https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&pithumbsize=100&redirects=1&format=json&origin=*&titles=' + articleName).then(function(response) {
             for (const key of Object.keys(response.data.query.pages)) {
               try {
-                self.note.image = response.data.query.pages[key].thumbnail.source;
+                self.note.persist.image = response.data.query.pages[key].thumbnail.source;
               } catch(err) {
-                self.note.image = 'https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1024px-Wikipedia-logo-v2.svg.png';
+                self.note.persist.image = 'https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1024px-Wikipedia-logo-v2.svg.png';
               }
               break;
             }
           });
         }
-        if(this.note.image == 'images/225px-Wikipedia-logo-v2.png') {
-          this.note.image = 'https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1024px-Wikipedia-logo-v2.svg.png';
+        if(this.note.persist.image == 'images/225px-Wikipedia-logo-v2.png') {
+          this.note.persist.image = 'https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1024px-Wikipedia-logo-v2.svg.png';
         }
-        return this.note.image;
+        return this.note.persist.image;
+      },
+      resize(event) {
+        var textareaElement = event.target;
+        // textareaElement.style.height = 'auto';
+        textareaElement.style.height = textareaElement.scrollHeight+'px';
+      },
+      submitEdit() {
+        this.note.persist.header = document.getElementById('edit-header').value;
+        this.note.persist.description = document.getElementById('edit-description').value;
+        this.note.editing = false;
       }
     }
   }
@@ -172,5 +201,24 @@
     background-image: linear-gradient(to bottom right, rgba(244, 222, 203, 0), rgba(244,222,203, 1));
     height: 30px;
     width: 60px;
+  }
+
+  /* editing mode */
+  textarea {
+    font-size: inherit;
+    font-weight: inherit;
+    background-color: inherit;
+    width: 100%;
+    border-color: rgba(27,28,29,0.2);
+    resize: none;
+    overflow: hidden;
+    line-height: 0.25;
+    padding-top: 6px;
+  }
+  .editing-tip {
+    width: 110px;
+    font-size: 10px;
+    text-align: right;
+    float: right;
   }
 </style>

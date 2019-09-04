@@ -1,13 +1,30 @@
 <template>
-  <div class="ChimeraNote">
+  <div v-if="!note.editing" class="ChimeraNote">
     <div class="tab-handle">
-      <img v-if="hasValue(this.note.image)" :src="this.note.image">
+      <img v-if="hasValue(this.note.persist.image)" :src="this.note.persist.image">
       <div class="note-header">
         <b>{{ this.note.header }}</b>
         <br>
-        <div v-if="hasValue(this.note.description)">{{this.note.description}}</div>
+        <div v-if="hasValue(this.note.persist.description)">{{this.note.persist.description}}</div>
         <br>
-        <a :href="this.note.url" target="_blank">{{this.note.linktitle}}</a>
+        <a :href="this.note.persist.url" target="_blank">{{this.note.persist.linktitle}}</a>
+      </div>
+    </div>
+  </div>
+
+  <div v-else class="ChimeraNote">
+    <div class="tab-handle">
+      <img v-if="hasValue(this.note.persist.image)" :src="this.note.persist.image">
+      <div class="note-header">
+        <b>
+          <textarea id="edit-header" placeholder="Add a header..." @keydown="resize" @keyup="resize">{{ note.persist.header }}</textarea>
+        </b>
+        <br>
+        <div>
+          <textarea id="edit-description" placeholder="Add a description...">{{ note.persist.description }}</textarea>
+        </div>
+        <br>
+        <a :href="this.note.persist.url" target="_blank">{{this.note.persist.linktitle}}</a>
       </div>
     </div>
   </div>
@@ -17,8 +34,7 @@
   export default {
     name: 'ChimeraNote',
     props: {
-      note: Object,
-      editing: Boolean
+      note: Object
     },
     methods: {
       hasValue(val) {
@@ -27,6 +43,16 @@
         } else {
           return true;
         }
+      },
+      resize(event) {
+        var textareaElement = event.target;
+        // textareaElement.style.height = 'auto';
+        textareaElement.style.height = textareaElement.scrollHeight+'px';
+      },
+      submitEdit() {
+        this.note.persist.header = document.getElementById('edit-header').value;
+        this.note.persist.description = document.getElementById('edit-description').value;
+        this.note.editing = false;
       }
     }
   }
@@ -101,5 +127,24 @@
     background-image: linear-gradient(to bottom right, rgba(244, 222, 203, 0), rgba(244,222,203, 1));
     height: 30px;
     width: 60px;
+  }
+
+  /* editing mode */
+  textarea {
+    font-size: inherit;
+    font-weight: inherit;
+    background-color: inherit;
+    width: 100%;
+    border-color: rgba(27,28,29,0.2);
+    resize: none;
+    overflow: hidden;
+    line-height: 0.25;
+    padding-top: 6px;
+  }
+  .editing-tip {
+    width: 110px;
+    font-size: 10px;
+    text-align: right;
+    float: right;
   }
 </style>

@@ -38,40 +38,34 @@
           <div id="paper-text">
 
             <div id="list-notes">
-              <div class="note tab-container" @click="timeJump(note.persist.timepoint)" v-for="note in sortedNotes" :data-type="note.persist.type" :data-index="note.persist.id" @keyup.shift.enter="stopEditing()">
+              <div class="note tab-container" @click="timeJump(note)" v-for="note in sortedNotes" :data-type="note.persist.type" :data-index="note.persist.id">
                 <!-- each note type is encapsulated and must be listed here to show up -->
                 <div class="time" v-if="note.persist.type === 'blank'"></div>
                 <div class="time" v-else>{{ getPrettyPrintTime(note.persist.timepoint) }}</div>
 
                 <TextNote class="contents" v-if="note.persist.type === 'text'"
-                  :header="note.persist.header"
-                  :description="note.persist.description"
-                  :editing="note.editing">
+                  :note="note">
                 </TextNote>
 
                 <WikipediaNote class="contents" v-else-if="note.persist.type === 'Wikipedia'"
-                  :note="note.persist"
-                  :editing="note.editing">
+                  :note="note">
                 </WikipediaNote>
 
                 <LinkNote class="contents" v-else-if="note.persist.type === 'link'"
-                  :note="note.persist"
-                  :editing="note.editing">
+                  :note="note">
                 </LinkNote>
 
                 <YoutubeNote class="contents" v-else-if="note.persist.type === 'video'"
-                  :note="note.persist"
-                  :editing="note.editing">
+                  :note="note">
                 </YoutubeNote>
 
                 <ChimeraNote class="contents" v-else-if="note.persist.type === 'annotations'"
-                  :note="note.persist"
-                  :editing="note.editing">
+                  :note="note">
                 </ChimeraNote>
 
-                <div class="modify-note fluid">
+                <div v-if="!note.editing" class="modify-note">
                   <i class="ellipsis horizontal icon toggle-additional-options" @click="toggleNoteEditOptions(note.persist.id)"></i>
-                  <i class="pencil icon edit-note" @click="toggleEditMode(note.persist.id)"></i>
+                  <i class="edit icon edit-note" @click="toggleEditMode(note.persist.id)"></i>
                   <i class="trash icon delete-note" @click="deleteNote(note.persist.id)"></i>
                 </div>
 
@@ -97,21 +91,22 @@
         </div>
         <div id="video-description">
           <div id="video-info">
-            <img v-bind:src="currentVideo.metadata.channelPhoto">
+            <img v-if="hasValue(currentVideo.metadata.channelPhoto)" :src="currentVideo.metadata.channelPhoto">
+            <img v-else src="../assets/logo.png">
             <div id="video-title">
-              <h4 class="ui header">{{currentVideo.metadata.title}}</h4>
-              <h5 class="ui header">{{currentVideo.metadata.channel}}</h5>
+              <h4 class="ui header"><input @keyup.enter="syncMetadataChanges" type="text" class="low-impact" v-model="localMetadata.title"></h4>
+              <h5 class="ui header"><input @keyup.enter="syncMetadataChanges" type="text" class="low-impact" v-model="localMetadata.channel" placeholder="Add an author/channel..."></h5>
             </div>
           </div>
           <div class="ui form">
             <div class="field">
-              <textarea id="video-info-textarea" v-model="currentVideo.metadata.description" placeholder="Add a description..."></textarea>
+              <textarea id="video-info-textarea" @keyup.enter="syncMetadataChanges" v-model="localMetadata.description" placeholder="Add a description..."></textarea>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 </template>
 
@@ -159,6 +154,7 @@
         searchQuery: '',
         videoId: this.$route.query.v,
         timestart: this.$route.query.t,
+        localMetadata: null,
         collectElapsedTime: null,
         elapsedTime: 0,
         prettyPrintTime: '00:00',
@@ -230,16 +226,33 @@
               output.metadata = temp;
             }
           }
+          // update last opened timestamp
+          output.metadata.lastOpened = Date.now();
         }
-        // update last opened timestamp
-        output.metadata.lastOpened = Date.now();
-    
+
+        for(const key in output.notes) {
+          if(output.notes[key] != null) {
+            output.notes[key].persist.id = key;
+            if(typeof output.notes[key].editing == 'undefined') {
+              output.notes[key].editing = false;
+            }
+          }
+        }
+
+        this.localMetadata = output.metadata;
+
         return output;
       },
       // arrange notes by timestamp
       sortedNotes: function() {
         var sortedKeys;
-        var notes = this.currentVideo.notes;
+        var notes = {};
+        for(var i in this.currentVideo.notes) {
+          if(typeof this.currentVideo.notes[i] != 'undefined') {
+            notes[i] = this.currentVideo.notes[i];
+
+          }
+        }
         var output = {};
         if(Object.keys(notes).length > 1) {
           var sortedKeys = Object.keys(notes).sort(function(a, b) {
@@ -262,18 +275,17 @@
       }
     },
     beforeDestroy() {
+      if(this.privacy == 'private') {
+        fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/videometa'+this.videoId).set(this.currentVideo.metadata);
+      }
       clearInterval(this.collectElapsedTime);
     },
     watch: {
       currentVideo: {
         handler: function() {
-          for(const key in this.currentVideo.notes) {
-            if(this.currentVideo.notes[key] != null) {
-              this.currentVideo.notes[key].persist.id = key;
-              if(typeof this.currentVideo.notes[key].editing == 'undefined') {
-                this.currentVideo.notes[key].editing = false;
-              }
-            }
+          if(this.privacy == 'private') {
+            fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/videometa'+this.videoId).set(this.currentVideo.metadata);
+            fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/'+this.videoId).set(this.currentVideo.notes);
           }
         },
         deep: true,
@@ -332,7 +344,7 @@
             store.state.index = 0
           }
           // open player
-          this.$router.replace({path: 'player', query: {v: id}});
+          this.$router.replace({path: 'player', query: {v: id, privacy: 'private'}});
         }
         // revert header buttons
         document.getElementById('search-bar').style.display = 'none';
@@ -353,6 +365,21 @@
          width: '100%',
          height: '100%'
         });
+
+        var videoId = gup('v', window.location.href);
+        if(typeof this.currentVideo.metadata =='undefined' || typeof this.currentVideo.metadata.videoId == 'undefined') {
+          this.currentVideo.metadata.title = 'Untitled Video';
+          this.currentVideo.metadata.author = '';
+          this.currentVideo.metadata.channel = '';
+          this.currentVideo.metadata.channelPhoto = '';
+          this.currentVideo.metadata.default = false;
+          this.currentVideo.metadata.description = '';
+          this.currentVideo.metadata.lastOpened = Date.now();
+          this.currentVideo.metadata.videoId = videoId;
+
+          console.log(this.currentVideo.metadata);
+          fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/videometa'+videoId).set(this.currentVideo.metadata);
+        }
 
         if(typeof this.timestart != 'undefined') {
           this.timeJump(this.timestart);
@@ -392,12 +419,18 @@
         }
         return ppt;
       },
-      timeJump(seconds) {
-        if(!this.disableTimeJump) {
-          this.player.seekTo(seconds);
-        } else {
-          this.disableTimeJump = false;
+      timeJump(note) {
+        var seconds = note.persist.timepoint;
+        if(!note.editing) {
+          if(!this.disableTimeJump) {
+            this.player.seekTo(seconds);
+          } else {
+            this.disableTimeJump = false;
+          }
         }
+      },
+      syncMetadataChanges() {
+        this.currentVideo.metadata = this.localMetadata;
       },
       submitNote() {
         var val = this.newNoteValue;
@@ -405,9 +438,9 @@
         var note = {};
         note.persist = {};
         note.persist.timepoint = this.timestartNewNote;
-        note.persist.header = false;
-        note.persist.description = false;
-        note.persist.image = false;
+        note.persist.header = '';
+        note.persist.description = '';
+        note.persist.image = '';
 
         //check for special cases
         //wikipedia
@@ -472,6 +505,7 @@
         if(this.currentVideo.notes.length != 0) {
           maxkey += 1;
         }
+        note.persist.id = maxkey; // unique identifier for each note
         if(this.privacy == 'private') {
           this.$set(this.currentVideo.notes, maxkey, note);
           // sync local notes with database
@@ -613,6 +647,7 @@
     font-weight: normal !important;
     font-family: 'Montserrat', 'Lato';
     text-align: left;
+    width: 100%;
   }
 
   #video-info img {
@@ -624,6 +659,7 @@
 
   #video-title {
     padding: 15px 10px 10px 10px;
+    width: 100%;
   }
 
   #video-title h4, h5 {
@@ -841,15 +877,6 @@
  }
 
 
-
-
-
-
-
-
-
-
-
  /* ----------- toggle options for each note ---------------- */
  .modify-note {
    height: 20px;
@@ -956,5 +983,14 @@
    height: 35px;
    font-size: 12px;
    font-family: 'Noto Sans', sans-serif;
+ }
+
+ .low-impact {
+   box-shadow: none;
+   border: none;
+   font-size: inherit;
+   font-weight: inherit;
+   background-color: inherit;
+   width: 100%;
  }
 </style>

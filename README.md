@@ -20,7 +20,7 @@ Eventually, the aggregated notes, transcripts and other video metadata will prov
 ## Getting Started
 
 ### Hosted Application
-View the most current working version of the Chimera Learning Platform at https://chimeraeditor.com/app/editor.
+View the most current working version of the Chimera Learning Platform at https://app.chimeraeditor.com/.
 
 ### Chrome Extension
 The chrome extension allows YouTube videos to be opened on Chimera. It is not available on the Chrome Web Store at the moment. However, you can load the unpacked extension after cloning this repository. Follow the instructions at https://developer.chrome.com/extensions/getstarted#manifest.
@@ -47,6 +47,7 @@ To start scraping YouTube, load the Jupyter notebook crawler/youtube_crawler.ipy
 - HTML/CSS/JavaScript
 - JQuery
 - Vue.js
+- Firebase
 - Semantic UI
 - YouTube -DL
 - Python
