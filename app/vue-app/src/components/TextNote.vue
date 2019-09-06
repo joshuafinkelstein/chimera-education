@@ -26,6 +26,7 @@
     },
     methods: {
       hasValue(val) {
+        this.note.editing = this.note.editing;
         if(val == false || val == '' || val == null) {
           return false;
         } else {

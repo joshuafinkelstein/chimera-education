@@ -14,8 +14,15 @@ Vue.config.productionTip = false;
 
 let app = '';
 
-fb.auth.onAuthStateChanged(() => {
-  // label vue instance
+fb.auth.onAuthStateChanged((currentUser) => {
+
+  if(currentUser) {
+    store.commit('setCurrentUser', currentUser);
+    store.commit('setUserProfile', currentUser.providerData[0]);
+    store.dispatch('fetchPublicDirectory');
+    store.dispatch('fetchPrivateDirectory');
+  }
+
   if(!app) {
     app = new Vue({
       router,

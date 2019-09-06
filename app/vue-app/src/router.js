@@ -7,6 +7,8 @@ import Login from '@/views/Login';
 import SignUp from '@/views/SignUp';
 import Player from '@/views/Player';
 
+const fb = require('./firebaseConfig.js');
+
 Vue.use(Router);
 
 const router = new Router({
@@ -50,16 +52,24 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  const currentUser = firebase.auth().currentUser;
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  fb.auth.onAuthStateChanged((currentUser) => {
+    
+    // specified path requires sign in and the user is not signed in
+    // redirect to login
+    if(requiresAuth && !currentUser) {
+      next('login');
+    }
+    // specified path does not require sign in and the user is signed in
+    // do not redirect to login if the user is already signed in
+    else if(!requiresAuth && currentUser) {
+      next('dashboard');
+    } else {
+      next();
+    }
 
-  if(requiresAuth && !currentUser) {
-    next('login');
-  } else if (!requiresAuth && currentUser) {
-    next('dashboard');
-  } else {
-    next();
-  }
+  });
+
 });
 
 export default router;

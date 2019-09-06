@@ -122,6 +122,7 @@
       index() {
         return store.state.index
       },
+      // sort directory by recently opened
       sortedPrivateDirectory() {
         var sortedKeys;
         var privateDirectory = {};
@@ -193,7 +194,6 @@
         document.getElementById('toggle-search').style.display = 'none';
         var width = window.innerWidth;
         if (width < 900) {
-          document.getElementById('toggle-back').style.display = 'none';
           document.getElementById('toggle-account').style.display = 'none';
         }
         document.getElementById('search-bar').style.display = 'flex';
@@ -219,7 +219,6 @@
         }
         // revert header buttons
         document.getElementById('search-bar').style.display = 'none';
-        document.getElementById('toggle-back').style.display = 'flex';
         document.getElementById('toggle-account').style.display = 'flex';
         document.getElementById('toggle-search').style.display = 'flex';
       },

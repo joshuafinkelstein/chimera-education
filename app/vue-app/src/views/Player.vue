@@ -151,10 +151,15 @@
     },
     data() {
       return {
+        privacy: this.$route.query.privacy,
         searchQuery: '',
         videoId: this.$route.query.v,
         timestart: this.$route.query.t,
-        localMetadata: null,
+        localMetadata: {
+          title: '...loading title',
+          channel: '...loading channel',
+          description: '..loading description'
+        },
         collectElapsedTime: null,
         elapsedTime: 0,
         prettyPrintTime: '00:00',
@@ -191,55 +196,71 @@
       index() {
         return store.state.index
       },
-      // private or public file being accessed
-      privacy() {
-        if(typeof this.$route.query.privacy == 'undefined') {
-          return 'public'; // default to public
-        } else {
-          return this.$route.query.privacy;
-        }
-      },
       player() {
         return this.$refs.youtube.player
       },
       currentVideo() {
+        // each video can have associated notes and metadata
         var output = {
           notes: {},
           metadata: {}
         }
+
         var temp;
-        if(this.privacy == 'public') {
-          for(const key in this.publicDirectory.notes) {
-            temp = this.publicDirectory.notes[key];
-            if(key == this.videoId) {
-              output.notes = temp;
-            } else if(key.length > 11 && key.substring(key.length-11, key.length) == this.videoId) {
-              output.metadata = temp;
+        // before anything, make sure the data is available
+        // issue on linking directly to a video
+        if(typeof this.privateDirectory.notes != 'undefined' && typeof this.publicDirectory.notes != 'undefined') {
+          // console.log('here');
+          if(this.privacy == 'public') {
+            for(const key in this.publicDirectory.notes) {
+              temp = this.publicDirectory.notes[key];
+              if(key == this.videoId) {
+                output.notes = temp;
+              } else if(key.length > 11 && key.substring(key.length-11, key.length) == this.videoId) {
+                output.metadata = temp;
+              }
+            }
+          } else {
+            // console.log(this.privateDirectory.notes);
+            for(const key in this.privateDirectory.notes) {
+              temp = this.privateDirectory.notes[key];
+              // console.log(key);
+              if(key == this.videoId) {
+                output.notes = temp;
+              } else if(key.length > 11 && key.substring(key.length-11, key.length) == this.videoId) {
+                output.metadata = temp;
+                // console.log('this one');
+              }
             }
           }
-        } else {
-          for(const key in this.privateDirectory.notes) {
-            temp = this.privateDirectory.notes[key];
-            if(key == this.videoId) {
-              output.notes = temp;
-            } else if(key.length > 11 && key.substring(key.length-11, key.length) == this.videoId) {
-              output.metadata = temp;
+
+          for(const key in output.notes) {
+            if(output.notes[key] != null) {
+              output.notes[key].persist.id = key;
+              if(typeof output.notes[key].editing == 'undefined') {
+                output.notes[key].editing = false;
+              }
             }
           }
+
+          if(typeof output.metadata.title == 'undefined') {
+            output.metadata = {
+              title: 'Untitled Video',
+              author: '',
+              channel: '',
+              channelPhoto: '',
+              default: false,
+              description: '',
+              lastOpened: Date.now(),
+              videoId: this.videoId
+            }
+          }
+
           // update last opened timestamp
           output.metadata.lastOpened = Date.now();
-        }
 
-        for(const key in output.notes) {
-          if(output.notes[key] != null) {
-            output.notes[key].persist.id = key;
-            if(typeof output.notes[key].editing == 'undefined') {
-              output.notes[key].editing = false;
-            }
-          }
+          this.localMetadata = output.metadata;
         }
-
-        this.localMetadata = output.metadata;
 
         return output;
       },
@@ -274,18 +295,25 @@
         }
       }
     },
+    created() {
+      // console.log(fb.auth.currentUser);
+    },
     beforeDestroy() {
-      if(this.privacy == 'private') {
-        fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/videometa'+this.videoId).set(this.currentVideo.metadata);
-      }
+      // update directory
+      // this.$store.dispatch('fetchPublicDirectory');
+      // this.$store.dispatch('fetchPrivateDirectory');
       clearInterval(this.collectElapsedTime);
     },
     watch: {
       currentVideo: {
         handler: function() {
-          if(this.privacy == 'private') {
-            fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/videometa'+this.videoId).set(this.currentVideo.metadata);
-            fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/'+this.videoId).set(this.currentVideo.notes);
+          // before anything, make sure the data is available
+          // issue on linking directly to a video
+          if(typeof this.privateDirectory.notes != 'undefined' && typeof this.publicDirectory.notes != 'undefined') {
+            if(this.privacy == 'private') {
+              fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/videometa'+this.videoId).set(this.currentVideo.metadata);
+              fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/'+this.videoId).set(this.currentVideo.notes);
+            }
           }
         },
         deep: true,
@@ -345,6 +373,7 @@
           }
           // open player
           this.$router.replace({path: 'player', query: {v: id, privacy: 'private'}});
+          this.$router.go();
         }
         // revert header buttons
         document.getElementById('search-bar').style.display = 'none';
@@ -365,21 +394,6 @@
          width: '100%',
          height: '100%'
         });
-
-        var videoId = gup('v', window.location.href);
-        if(typeof this.currentVideo.metadata =='undefined' || typeof this.currentVideo.metadata.videoId == 'undefined') {
-          this.currentVideo.metadata.title = 'Untitled Video';
-          this.currentVideo.metadata.author = '';
-          this.currentVideo.metadata.channel = '';
-          this.currentVideo.metadata.channelPhoto = '';
-          this.currentVideo.metadata.default = false;
-          this.currentVideo.metadata.description = '';
-          this.currentVideo.metadata.lastOpened = Date.now();
-          this.currentVideo.metadata.videoId = videoId;
-
-          console.log(this.currentVideo.metadata);
-          fb.db.ref('users/'+fb.auth.currentUser.uid+'/notes/videometa'+videoId).set(this.currentVideo.metadata);
-        }
 
         if(typeof this.timestart != 'undefined') {
           this.timeJump(this.timestart);
@@ -502,7 +516,7 @@
             maxkey = parseInt(key);
           }
         }
-        if(this.currentVideo.notes.length != 0) {
+        if(typeof this.currentVideo.notes.length != 'undefined') {
           maxkey += 1;
         }
         note.persist.id = maxkey; // unique identifier for each note
