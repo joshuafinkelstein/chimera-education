@@ -10,6 +10,9 @@ import VueAxios from 'vue-axios'
 Vue.use(VueYoutube)
 Vue.use(VueAxios, axios)
 
+import VueMathjax from 'vue-mathjax'
+Vue.use(VueMathjax)
+
 Vue.config.productionTip = false;
 
 let app = '';

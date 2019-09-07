@@ -158,6 +158,10 @@
         }
       }
     },
+    created() {
+      store.dispatch('fetchPublicDirectory');
+      store.dispatch('fetchPrivateDirectory');
+    },
     methods: {
       logout() {
         fb.auth.signOut().then(() => {

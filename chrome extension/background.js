@@ -19,9 +19,9 @@ chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
   // on YouTube
   if(v != null) {
     if(t != null) {
-      new_url = 'https://chimeraeditor.com/app/editor?v=' + v + '&t=' + t.substring(0, t.length-1);
+      new_url = 'https://app.chimeraeditor.com/player?privacy=private&v=' + v + '&t=' + t.substring(0, t.length-1);
     } else {
-      new_url = 'https://chimeraeditor.com/app/editor?v=' + v;
+      new_url = 'https://app.chimeraeditor.com/player?privacy=private&v=' + v;
     }
     console.log(new_url);
     document.getElementById('chimera-link').innerHTML = "<a href='"+new_url+"'>"+new_url+'</a>';

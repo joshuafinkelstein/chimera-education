@@ -320,9 +320,11 @@
         immediate: true
       },
       newNoteValue() {
+        // set timepoint of note when the user starts typing
+        // reset timepoint if user clears input
         if(this.newNoteValue == '' && this.timestartNewNote != null) {
           this.timestartNewNote = null;
-        } else if(this.timestartNewNote == null) {
+        } else if(this.newNoteValue != '' && this.timestartNewNote == null) {
           this.timestartNewNote = this.elapsedTime;
         }
       }
@@ -396,7 +398,7 @@
         });
 
         if(typeof this.timestart != 'undefined') {
-          this.timeJump(this.timestart);
+          this.player.seekTo(this.timestart);
         }
       },
       async playing() {
@@ -451,7 +453,12 @@
         this.newNoteValue = '';
         var note = {};
         note.persist = {};
-        note.persist.timepoint = this.timestartNewNote;
+        if(this.timestartNewNote <= 5) {
+          note.persist.timepoint = this.timestartNewNote;
+        } else {
+          // 5 sec before current timepoint
+          note.persist.timepoint = this.timestartNewNote - 5;
+        }
         note.persist.header = '';
         note.persist.description = '';
         note.persist.image = '';
