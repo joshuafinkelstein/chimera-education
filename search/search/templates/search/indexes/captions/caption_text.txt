@@ -1,0 +1,6 @@
+{{ object.title }}
+{{ object.uploader }}
+{{ object.videoid }}
+{{ object.thumbnail }}
+{{ object.description }}
+{{ object.captions }}

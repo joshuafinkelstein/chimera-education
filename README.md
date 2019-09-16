@@ -51,6 +51,8 @@ To start scraping YouTube, load the Jupyter notebook crawler/youtube_crawler.ipy
 - Semantic UI
 - YouTube -DL
 - Python
+- Django REST Framework
+- Haystack/Whoosh
 - Jupyter
 - MathJax
 

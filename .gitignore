@@ -1,5 +1,9 @@
 test/MathJax
 
-index/downloaded_transcripts/
+index/downloads/
 
 app/vue-app/src/firebaseConfig.js
+
+search/search/db.sqlite3
+
+search/search/search/whoosh_index
